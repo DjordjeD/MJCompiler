@@ -1,0 +1,76 @@
+program test
+
+const int cnst = true;
+pera b;
+
+class Base {
+int x;
+	{
+
+		char f(int m) {}
+	}
+}
+class Derived extends Base {
+	{
+		void f(int m) int a; {}
+	}
+}
+class ErrClass extends int {
+
+}
+
+int Base;
+{
+	void retMet() {
+		return 1;
+	}
+	int retMetint() {
+		return 'c';
+	}
+	void mPar1(int i) {}
+	void main() int a; bool b; char c; int arr[]; Derived d; {
+		a = true;
+		c = 5;
+		arr = 5;
+		a = arr;
+		a = new Base;
+		d = new Base;
+		ord('c');
+		len(a);
+		chr(true);
+		cnst = 5;
+		d.y = 5;
+		d.meth();
+		a = retMet();
+		continue;
+		break;
+		if (5) {
+		}
+		do {
+		} while (6);
+
+		switch (true) {
+			case 1: case 5: break;
+			case 4: break;
+			case 1: break;
+		}
+
+		mPar1(5, 6);
+
+		if (true == 5) {
+		}
+
+		if (d >= d) {
+		}
+
+		a = true ? 5 : 'a';
+
+		a = 5 * true;
+
+		a = new int;
+
+		arr.x = 5;
+
+		arr = new int[true];
+	}
+}

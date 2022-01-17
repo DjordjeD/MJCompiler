@@ -1,0 +1,38 @@
+INFO  15:54:01,006 - Compiling source file: /Users/djole/Desktop/PP1 projekat/test/program.mj
+INFO  15:54:01,032 - #2 program
+INFO  15:54:01,032 - #22 mojProgram
+INFO  15:54:01,032 - #6 const
+INFO  15:54:01,033 - #22 int
+INFO  15:54:01,033 - #22 a
+INFO  15:54:01,033 - #36 =
+INFO  15:54:01,033 - #19 5
+INFO  15:54:01,034 - #39 ;
+INFO  15:54:01,034 - #44 {
+INFO  15:54:01,034 - #45 }
+INFO  15:54:01,036 - Program(
+  ProgramName(
+   mojProgram
+  ) [ProgramName]
+  DeclarationList(
+    DeclarationEmpty(
+    ) [DeclarationEmpty]
+    ConstDeclarationType(
+      ConstDeclaration(
+        Type(
+         int
+        ) [Type]
+        IdentAssignSingle(
+          IdentAssignNumber(
+           a
+           5
+          ) [IdentAssignNumber]
+        ) [IdentAssignSingle]
+      ) [ConstDeclaration]
+    ) [ConstDeclarationType]
+  ) [DeclarationList]
+  MethodDeclarationEmpty(
+  ) [MethodDeclarationEmpty]
+) [Program]
+INFO  15:54:01,036 - ===================================
+INFO  15:54:01,039 -  Print count calls = 1
+INFO  15:54:01,039 -  Deklarisanih promenljivih ima = 1

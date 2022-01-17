@@ -1,0 +1,125 @@
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+
+// import java.io.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+	private boolean errorDetected = false;
+	private Logger log = Logger.getLogger(getClass());
+
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSyntax error", cur_token);
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatal syntax error, cannot continue parsing", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message);
+    	if (info instanceof Symbol)
+            msg.append (" at line ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+    public void report_info(String message, Object info) {
+    	StringBuilder msg = new StringBuilder(message);
+    	if (info instanceof Symbol)
+            msg.append (" at line ").append(((Symbol)info).left);
+        log.info(msg.toString());
+    }
+
+		public boolean errorOccured() {
+			return errorDetected;
+		}
+:}
+
+scan with {:
+
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null)
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+
+/*
+terminal PROG, CONST, SEMI, ELSE, EQUAL;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE;
+
+terminal Integer NUMBER;
+terminal Character CHARACTER;
+terminal Boolean BOOLEAN;
+terminal String IDENT;
+
+
+*/
+
+terminal PROG, BREAK, CLASS, ELSE, CONST, IF, SWITCH, DO, WHILE, NEW;
+terminal PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, CASE;
+
+
+terminal Integer NUMBER;
+terminal Character CHARACTER;
+terminal Boolean BOOLEAN;
+terminal String IDENT;
+
+terminal PLUS, MINUS, MUL, DIV, MOD;
+terminal RELEQUAL, NOTEQUAL, GREATER, GREATEREQ, LESS, LESSEQ, AND, OR;
+terminal EQUAL, INCR, DECR, SEMI, COMMA, DOT;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON;
+
+nonterminal Program, ProgramName, Declarations, Declaration, ConstDeclaration, ClassDeclaration;
+nonterminal Type, IdentAssign, ConstIdentSwitch;
+nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationSingle;
+nonterminal MethodDeclList;
+
+
+precedence left ELSE;
+
+Program ::= (Program) PROG ProgramName Declarations LBRACE MethodDeclList RBRACE;
+
+ProgramName ::= (ProgramName) IDENT : programName;
+
+
+Declarations ::= (DeclarationList) Declarations Declaration
+                 | (DeclarationEmpty);
+
+
+Declaration ::= (ConstDeclarationType) ConstDeclaration
+                | (VarDeclarationType) VarDeclaration
+                | (ClassDeclarationType) ClassDeclaration;
+
+
+ConstDeclaration ::= (ConstDeclaration) CONST Type ConstIdentSwitch SEMI;
+
+Type ::= (Type) IDENT:type;
+
+ConstIdentSwitch ::= (IdentAssignSingle) IdentAssign
+                | (IdentAssignComma) ConstIdentSwitch COMMA IdentAssign;
+
+IdentAssign ::= (IdentAssignNumber) IDENT:name EQUAL NUMBER:numberVal
+							| (IdentAssignCharacter) IDENT:name EQUAL CHARACTER:characterVal
+							| (IdentAssignBoolean) IDENT:name EQUAL BOOLEAN:booleanVal;
+
+
+VarDeclaration ::= (VarDeclaration) Type VarDeclarationSwitch SEMI | (VarDeclarationError) error:l
+					{: parser.report_error("Recovered VarDeclaration from error to , ; or { at line " + lleft, null);  :};
+
+VarDeclarationSwitch :: = (VarDeclarationSingle) VarDeclarationSingle |
+                          (VarDeclarationComma) VarDeclarationSwitch COMMA VarDeclarationSingle;
+
+
+VarDeclarationSingle :: = (VarDeclarationNormal) IDENT:varName | (VarDeclarationArray) IDENT:varName LSQUARE RSQUARE;
+
+
+MethodDeclList ::= (MethodDeclarationEmpty);

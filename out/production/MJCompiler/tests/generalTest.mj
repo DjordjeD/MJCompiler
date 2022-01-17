@@ -1,0 +1,81 @@
+program test
+
+int g1;
+char gc1, gc2;
+const int pi = 3, e = 2;
+const int n = 10;
+
+class Base {
+	int b;
+	{
+		void o() { print('B'); print('o'); print(b); print(eol); }
+		void f() { print('B'); print('f'); print(eol); }
+		int getB() int loc; { loc = 5; return loc * this.b; }
+	}
+}
+
+class Ext extends Base {
+	int e;
+	{
+		void f() { print('E'); print('f'); print(this.b); print(eol); }
+		void m() { print('E'); print('m'); print(eol); }
+	}
+}
+
+{
+	void f(int arr[], int i) {
+		print(arr[i]);
+	}
+	void main() int r; int arr[]; int i; bool b; Base baseObj; {
+		read(r);
+
+		// this is comment
+		g1 = 2 * r * r * pi;
+
+		print(g1);
+
+		arr = new int[n];
+		i = 0;
+		do {
+			arr[i] = ((2 + i) * 5 - i / 3) % 3;
+			i++;
+			if (i == 7)
+				continue;
+		} while (i < n);
+		i--;
+		print(arr[i]);
+		print('=');
+		f(arr, i);
+
+		switch (i) {
+			case 9: print(9);
+			case 10: print(10); break;
+		}
+
+		b = true;
+		print(b ? 'T' : 'F');
+		print(len(arr));
+
+		print(eol);
+		if (chr(ord('c')) == 'c') {
+			print('o');
+			print('k');
+		}
+
+		baseObj = null;
+		if (1 < 0 && -5 < 8 || baseObj == null) {
+			baseObj = new Base;
+		}
+
+		baseObj.b = 5;
+		baseObj.o();
+		baseObj.f();
+
+		baseObj = new Ext;
+		baseObj.b = 6;
+		baseObj.o();
+		baseObj.f();
+
+		print(baseObj.getB());
+	}
+}

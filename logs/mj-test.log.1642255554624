@@ -1,0 +1,17 @@
+INFO  15:04:12,142 - Compiling source file: /Users/djole/Desktop/PP1 projekat/test/program.mj
+INFO  15:04:12,149 - #2 program
+INFO  15:04:12,149 - #22 mojProgram
+INFO  15:04:12,149 - #22 int
+INFO  15:04:12,149 - #22 a
+INFO  15:04:12,149 - #39 ;
+INFO  15:04:12,149 - #22 int
+INFO  15:04:12,149 - #22 b
+INFO  15:04:12,149 - #39 ;
+INFO  15:04:12,149 - #6 const
+INFO  15:04:12,149 - #22 int
+INFO  15:04:12,149 - #22 a
+INFO  15:04:12,149 - #36 =
+INFO  15:04:12,149 - #19 5
+INFO  15:04:12,149 - #39 ;
+INFO  15:04:12,149 - #44 {
+INFO  15:04:12,149 - #45 }

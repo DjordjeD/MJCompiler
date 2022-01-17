@@ -1,0 +1,13 @@
+INFO  09:36:46,609 - Compiling source file: /Users/djole/Desktop/PP1 projekat/test/program.mj
+INFO  09:36:46,636 - #2 program
+INFO  09:36:46,636 - #22 mojProgram
+INFO  09:36:46,636 - #6 const
+INFO  09:36:46,637 - #22 int
+INFO  09:36:46,637 - #22 a
+INFO  09:36:46,638 - #36 =
+INFO  09:36:46,638 - #19 5
+INFO  09:36:46,638 - #39 ;
+INFO  09:36:46,638 - #22 int
+ERROR 09:36:46,638 - 
+Syntax error at line 3
+ERROR 09:36:46,638 - Fatal syntax error, cannot continue parsing at line 3

@@ -1,0 +1,33 @@
+program test
+class A {
+	int x, y, z;
+	{
+		void g() {
+			print('G');
+		}
+		void f(int x, int y) {
+			this.g();
+			print(x);
+			print(y);
+			print(this.x);
+			print(this.y);
+			this.x = x;
+			this.y = y;
+			print(this.x);
+			print(this.y);
+			g();
+			z = 100;
+			this.x = z;
+			x = 8;
+			print(this.x);
+		}
+	}
+}
+{
+	void main() A a; {
+		a = new A;
+		a.x = 5;
+		a.y = 6;
+		a.f(7, 8);
+	}
+}

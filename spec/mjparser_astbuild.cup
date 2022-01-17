@@ -1,0 +1,122 @@
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+
+// import java.io.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+	private boolean errorDetected = false;
+	private Logger log = Logger.getLogger(getClass());
+
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSyntax error", cur_token);
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatal syntax error, cannot continue parsing", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message);
+    	if (info instanceof Symbol)
+            msg.append (" at line ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+    public void report_info(String message, Object info) {
+    	StringBuilder msg = new StringBuilder(message);
+    	if (info instanceof Symbol)
+            msg.append (" at line ").append(((Symbol)info).left);
+        log.info(msg.toString());
+    }
+
+		public boolean errorOccured() {
+			return errorDetected;
+		}
+:}
+
+scan with {:
+
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null)
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+
+/*
+terminal PROG, CONST, SEMI, ELSE, EQUAL;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE;
+
+terminal Integer NUMBER;
+terminal Character CHARACTER;
+terminal Boolean BOOLEAN;
+terminal String IDENT;
+
+
+*/
+
+terminal PROG, BREAK, CLASS, ELSE, CONST, IF, SWITCH, DO, WHILE, NEW;
+terminal PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, CASE;
+
+
+terminal Integer NUMBER;
+terminal Character CHARACTER;
+terminal Boolean BOOLEAN;
+terminal String IDENT;
+
+terminal PLUS, MINUS, MUL, DIV, MOD;
+terminal RELEQUAL, NOTEQUAL, GREATER, GREATEREQ, LESS, LESSEQ, AND, OR;
+terminal EQUAL, INCR, DECR, SEMI, COMMA, DOT;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON;
+
+nonterminal Program Program;
+nonterminal ProgramName ProgramName;
+nonterminal Declarations Declarations;
+nonterminal Declaration Declaration;
+nonterminal ConstDeclaration ConstDeclaration;
+nonterminal VarDeclaration VarDeclaration;
+nonterminal ClassDeclaration ClassDeclaration;
+nonterminal Type Type;
+nonterminal IdentAssign IdentAssign;
+nonterminal ConstIdentSwitch ConstIdentSwitch;
+nonterminal MethodDeclList MethodDeclList;
+
+
+precedence left ELSE;
+
+Program ::= (Program) PROG ProgramName:P1 Declarations:D2 LBRACE MethodDeclList:M3 RBRACE {: RESULT=new Program(P1, D2, M3); RESULT.setLine(P1left); :};
+
+ProgramName ::= (ProgramName) IDENT : programName {: RESULT=new ProgramName(programName); RESULT.setLine(programNameleft); :};
+
+
+Declarations ::= (DeclarationList) Declarations:D1 Declaration:D2 {: RESULT=new DeclarationList(D1, D2); RESULT.setLine(D1left); :}
+                 | (DeclarationEmpty) {: RESULT=new DeclarationEmpty(); :};
+
+
+Declaration ::= (ConstDeclarationType) ConstDeclaration:C1 {: RESULT=new ConstDeclarationType(C1); RESULT.setLine(C1left); :}
+                | (VarDeclarationType) VarDeclaration:V1 {: RESULT=new VarDeclarationType(V1); RESULT.setLine(V1left); :}
+                | (ClassDeclarationType) ClassDeclaration:C1 {: RESULT=new ClassDeclarationType(C1); RESULT.setLine(C1left); :};
+
+
+ConstDeclaration ::= (ConstDeclaration) CONST Type:T1 ConstIdentSwitch:C2 SEMI {: RESULT=new ConstDeclaration(T1, C2); RESULT.setLine(T1left); :};
+
+Type ::= (Type) IDENT:type {: RESULT=new Type(type); RESULT.setLine(typeleft); :};
+
+ConstIdentSwitch ::= (IdentAssignSingle) IdentAssign:I1 {: RESULT=new IdentAssignSingle(I1); RESULT.setLine(I1left); :}
+                | (IdentAssignComma) ConstIdentSwitch:C1 COMMA IdentAssign:I2 {: RESULT=new IdentAssignComma(C1, I2); RESULT.setLine(C1left); :};
+
+IdentAssign ::= (IdentAssignNumber) IDENT:name EQUAL NUMBER:numberVal {: RESULT=new IdentAssignNumber(name, numberVal); RESULT.setLine(nameleft); :}
+							| (IdentAssignCharacter) IDENT:name EQUAL CHARACTER:characterVal {: RESULT=new IdentAssignCharacter(name, characterVal); RESULT.setLine(nameleft); :}
+							| (IdentAssignBoolean) IDENT:name EQUAL BOOLEAN:booleanVal {: RESULT=new IdentAssignBoolean(name, booleanVal); RESULT.setLine(nameleft); :};
+
+
+MethodDeclList ::= (MethodDeclarationEmpty) {: RESULT=new MethodDeclarationEmpty(); :};
