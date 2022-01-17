@@ -80,8 +80,10 @@ terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON;
 
 nonterminal Program, ProgramName, Declarations, Declaration, ConstDeclaration, ClassDeclaration;
 nonterminal Type, IdentAssign, ConstIdentSwitch;
-nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationSingle;
-nonterminal MethodDeclList;
+nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationSingleOrArray, VarDeclarationList;
+nonterminal MethodDeclList, MethodDeclaration, MethodSignature, MethodReturn, MethodTypeName;
+nonterminal FormPars, FormParsSwitch, FormParsSingleOrArray;
+nonterminal StatementList;
 
 
 precedence left ELSE;
@@ -100,9 +102,9 @@ Declaration ::= (ConstDeclarationType) ConstDeclaration
                 | (ClassDeclarationType) ClassDeclaration;
 
 
-ConstDeclaration ::= (ConstDeclaration) CONST Type ConstIdentSwitch SEMI;
 
-Type ::= (Type) IDENT:type;
+ConstDeclaration ::= (ConstDeclarationClass) CONST Type ConstIdentSwitch SEMI;
+
 
 ConstIdentSwitch ::= (IdentAssignSingle) IdentAssign
                 | (IdentAssignComma) ConstIdentSwitch COMMA IdentAssign;
@@ -112,14 +114,42 @@ IdentAssign ::= (IdentAssignNumber) IDENT:name EQUAL NUMBER:numberVal
 							| (IdentAssignBoolean) IDENT:name EQUAL BOOLEAN:booleanVal;
 
 
-VarDeclaration ::= (VarDeclaration) Type VarDeclarationSwitch SEMI | (VarDeclarationError) error:l
+VarDeclaration ::= (VarDeclarationClass) Type VarDeclarationSwitch SEMI
+                    | (VarDeclarationError) error:l
 					{: parser.report_error("Recovered VarDeclaration from error to , ; or { at line " + lleft, null);  :};
 
-VarDeclarationSwitch :: = (VarDeclarationSingle) VarDeclarationSingle |
-                          (VarDeclarationComma) VarDeclarationSwitch COMMA VarDeclarationSingle;
+VarDeclarationSwitch ::= (VarDeclarationSingleClass) VarDeclarationSingleOrArray |
+                          (VarDeclarationComma) VarDeclarationSwitch COMMA VarDeclarationSingleOrArray;
+
+VarDeclarationSingleOrArray ::= (VarDeclarationNormal) IDENT:varName | (VarDeclarationArray) IDENT:varName LSQUARE RSQUARE;
+
+Type ::= (Type) IDENT:type;
+
+VarDeclarationList ::= (VarDeclarationEmpty) |	(VarDeclarationElement) VarDeclarationList VarDeclaration;
 
 
-VarDeclarationSingle :: = (VarDeclarationNormal) IDENT:varName | (VarDeclarationArray) IDENT:varName LSQUARE RSQUARE;
+MethodDeclList ::=   (MethodDeclarationEmpty) | (MethodDeclarationListClass) MethodDeclList MethodDeclaration;
+
+MethodDeclaration ::= (MethodDeclarationClass) MethodSignature LBRACE StatementList RBRACE; /* potencijalno problem ako
+ide LBRACE IZMEDJU STATEMENT LISTA*/
 
 
-MethodDeclList ::= (MethodDeclarationEmpty);
+MethodSignature ::= (MethodSignatureClass) MethodTypeName LPAREN FormPars RPAREN VarDeclarationList;
+
+MethodTypeName ::=  (MethodTypeNameClass) MethodReturn IDENT:methodName;
+
+MethodReturn ::= (MethodTypeOther) Type | (MethodTypeVoid) VOID;
+
+FormPars ::= (FormParsEmpty)
+            | (FormParsSwitchClass) FormParsSwitch
+            | (FormParsError) error:l {: parser.report_error("Recovered formPars from error to , or ) at line " + lleft, null);  :};
+
+FormParsSwitch ::= (FormParsSingleClass) FormParsSingleOrArray
+                | (FormParsComma) FormParsSwitch COMMA FormParsSingleOrArray;
+
+FormParsSingleOrArray ::= (FormParameterNormal) Type IDENT:paramVal
+                | (FormParameterArray)Type IDENT:paramVal LSQUARE RSQUARE;
+
+
+
+StatementList ::= (StatementListEmpty);
