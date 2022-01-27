@@ -1,0 +1,249 @@
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+
+// import java.io.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+	private boolean errorDetected = false;
+	private Logger log = Logger.getLogger(getClass());
+
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSyntax error", cur_token);
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatal syntax error, cannot continue parsing", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message);
+    	if (info instanceof Symbol)
+            msg.append (" at line ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+    public void report_info(String message, Object info) {
+    	StringBuilder msg = new StringBuilder(message);
+    	if (info instanceof Symbol)
+            msg.append (" at line ").append(((Symbol)info).left);
+        log.info(msg.toString());
+    }
+
+		public boolean errorOccured() {
+			return errorDetected;
+		}
+:}
+
+scan with {:
+
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null)
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+
+
+
+terminal PROG;
+terminal BREAK, IF, ELSE, CONST, DO, WHILE, NEW;
+terminal PRINT, READ, RETURN;
+terminal VOID, CONTINUE, GOTO;
+
+terminal Integer NUMBER;
+terminal Character CHARACTER;
+terminal Boolean BOOLEAN;
+terminal String IDENT;
+
+terminal PLUS, MINUS, DIV,MUL, MOD;
+terminal RELEQUAL, NOTEQUAL, GREATER, GREATEREQ, LESS, LESSEQ, AND, OR;
+terminal EQUAL, INCR, DECR, SEMI, COMMA, DOT;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON, RECORD;
+
+nonterminal Program, ProgramName, Declarations, Declaration, ConstDeclaration, ClassDeclaration;
+nonterminal Type, IdentAssign, ConstIdentSwitch;
+nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationSingleOrArray, VarDeclarationList;
+nonterminal MethodDeclList, MethodDeclaration, MethodSignature, MethodReturn, MethodTypeName;
+nonterminal FormPars, FormParsSwitch, FormParsSingleOrArray;
+
+nonterminal StatementList, Statements, Statement, SingleStatement, Label;
+nonterminal DesignatorStatement, Designator, /* DesignatorInElement*/ ;
+nonterminal Term, Factor, ActPars;
+nonterminal Expr, IfHeader, ElseHeader, DoWhileHeader;
+nonterminal Addop, Mulop, Relop;
+
+nonterminal Condition, CondTerm, CondFact;
+nonterminal java.lang.Integer PcGetter;
+
+nonterminal OptionalPrint, OptionalExpr, RecordDecl;
+
+
+precedence left ELSE;
+
+Program ::= (Program) PROG ProgramName Declarations LBRACE MethodDeclList RBRACE;
+
+ProgramName ::= (ProgramName) IDENT : programName;
+
+
+Declarations ::= (DeclarationList) Declarations Declaration
+                 | (DeclarationEmpty);
+
+
+Declaration ::= (ConstDeclarationType) ConstDeclaration
+                | (VarDeclarationType) VarDeclaration
+                | (ClassDeclarationType) ClassDeclaration;
+
+
+
+ConstDeclaration ::= (ConstDeclarationClass) CONST Type ConstIdentSwitch SEMI;
+
+
+ConstIdentSwitch ::= (IdentAssignSingle) IdentAssign
+                | (IdentAssignComma) ConstIdentSwitch COMMA IdentAssign;
+
+IdentAssign ::= (IdentAssignNumber) IDENT:name EQUAL NUMBER:numberVal
+							| (IdentAssignCharacter) IDENT:name EQUAL CHARACTER:characterVal
+							| (IdentAssignBoolean) IDENT:name EQUAL BOOLEAN:booleanVal;
+
+
+VarDeclaration ::= (VarDeclarationClass) Type VarDeclarationSwitch SEMI
+                    | (VarDeclarationError) error:l
+					{: parser.report_error("Recovered VarDeclaration from error to , ; or { at line " + lleft, null);  :};
+
+VarDeclarationSwitch ::= (VarDeclarationSingleClass) VarDeclarationSingleOrArray |
+                          (VarDeclarationComma) VarDeclarationSwitch COMMA VarDeclarationSingleOrArray;
+
+VarDeclarationSingleOrArray ::= (VarDeclarationNormal) IDENT:varName | (VarDeclarationArray) IDENT:varName LSQUARE RSQUARE;
+
+Type ::= (Type) IDENT:type;
+
+VarDeclarationList ::= (VarDeclarationEmpty) |	(VarDeclarationElement) VarDeclarationList VarDeclaration;
+
+
+MethodDeclList ::=   (MethodDeclarationEmpty) | (MethodDeclarationListClass) MethodDeclList MethodDeclaration;
+
+MethodDeclaration ::= (MethodDeclarationClass) MethodSignature LBRACE StatementList RBRACE;
+/* potencijalno problem ako
+ide LBRACE IZMEDJU STATEMENT LISTA*/
+
+
+MethodSignature ::= (MethodSignatureClass) MethodTypeName LPAREN FormPars RPAREN VarDeclarationList;
+
+MethodTypeName ::=  (MethodTypeNameClass) MethodReturn IDENT:methodName;
+
+MethodReturn ::= (MethodTypeOther) Type | (MethodTypeVoid) VOID;
+
+FormPars ::= (FormParsEmpty)
+            | (FormParsSwitchClass) FormParsSwitch
+            | (FormParsError) error:l {: parser.report_error("Recovered formPars from error to , or ) at line " + lleft, null);  :};
+
+FormParsSwitch ::= (FormParsSingleClass) FormParsSingleOrArray
+                | (FormParsComma) FormParsSwitch COMMA FormParsSingleOrArray;
+
+FormParsSingleOrArray ::= (FormParameterNormal) Type IDENT:paramVal
+                | (FormParameterArray)Type IDENT:paramVal LSQUARE RSQUARE;
+
+
+
+StatementList ::= (StatementListClass) StatementList Statements | (StatementListEmpty);
+
+Label ::= IDENT: name;
+
+Statements ::= (StatementsLabel) Label COLON SingleStatement | (StatementClass) Statement;
+
+
+SingleStatement ::= (DesignatorStatementClass) DesignatorStatement SEMI
+                    |	(StatementRead) READ LPAREN Designator RPAREN SEMI
+                    | (StatementPrint) PRINT LPAREN Expr OptionalPrint RPAREN SEMI
+                    | (StatementGoto) GOTO Label SEMI;
+
+Statement ::= (StatementIf) IfHeader PcGetter:trueStart Statement
+              | (StatementIfElse) IfHeader PcGetter:trueStart Statement ElseHeader PcGetter:falseStart Statement
+              | (StatementDoWhile) DoWhileHeader PcGetter:doWhileStart Statement WHILE LPAREN Condition RPAREN SEMI
+              |	(StatementBreak) BREAK SEMI
+              |	(StatementContinue) CONTINUE SEMI
+              | (StatementReturn) RETURN OptionalExpr SEMI
+              |	(StatementBlock) LBRACE Statement RBRACE;
+
+OptionalExpr ::=  (OptionalExprEmpty) | (OptionalExprExpr) Expr;
+
+OptionalPrint ::= (OptionalPrintEmpty) | (OptionalPrintComma) COMMA NUMBER:number;
+
+IfHeader ::= (IfHeader) IF LPAREN Condition RPAREN;
+
+ElseHeader ::= (ElseHeader) ELSE;
+
+DoWhileHeader ::= (DoWhileHeader) DO;
+
+PcGetter ::= (PcGetter);
+
+ActPars ::= (ActParsEmpty) | (ActParsSingle) Expr |	(ActParsMultiple) ActPars COMMA Expr;
+
+RecordDecl ::= (RecordDeclClass) RECORD IDENT:recordName LBRACE VarDeclaration RBRACE;
+
+
+DesignatorStatement ::= (DesignatorError)  error:l {: parser.report_error("Recovered DesignatorError from error to ; at line " + lleft, null);  :}
+                        | (DesignatorExpr) Designator LPAREN ActPars RPAREN
+                        | (DesignatorEquals) Designator EQUAL Expr
+                       | (DesignatorPlusPlus) Designator INCR | (DesignatorMinusMinus) Designator DECR;
+
+Designator ::= (DesignatorSingle) IDENT:origin | (DesignatorMultiple) Designator LSQUARE Expr RSQUARE
+|	(DesignatorField) Designator DOT IDENT:field;
+
+
+
+/* mozda treba da se izvede jos jedna smena */
+
+/*DesignatorInElement ::= (DesignatorInElementClass) Designator;*/
+
+/*Expr ::= 	(ExprSimpleClass) ExprSimple; */
+
+Expr ::= (ExprSingle) Term | (ExprMinus) MINUS Term | (ExprMultiple) Expr Addop Term;
+
+Term ::= (TermSingle) Factor | (TermMultiple) Term Mulop Factor;
+
+Factor ::= (FactorNumber) NUMBER:value
+        |	(FactorCharacter) CHARACTER:value
+        |	(FactorBoolean) BOOLEAN:value
+        |	(FactorNewScalar) NEW Type
+        | (FactorNewArray) NEW Type LSQUARE Expr RSQUARE
+        | (FactorParExpr) LPAREN Expr RPAREN
+        | (FactorDesignator) Designator
+        | (FactorDesignatorMultiple) Designator LPAREN ActPars RPAREN;
+
+
+/* da li treba DesignatorCall ::= (DesignatorCall) Designator; */
+
+Relop ::= (RelopEquals) RELEQUAL
+          |	(RelopNotEquals) NOTEQUAL
+		  |	(RelopGreater) GREATER
+		  |	(RelopGreaterEquals) GREATEREQ
+		  |	(RelopLess) LESS
+		  | (RelopLessEquals) LESSEQ;
+
+
+Addop ::= (AddopPlus) PLUS
+				|	(AddopMinus) MINUS;
+
+Mulop ::= (MulopMul) MUL
+				|	(MulopDiv) DIV
+				|	(MulopMod) MOD;
+
+CondFact ::= (CondExprSingle) Expr | (CondExprMultiple) CondFact Relop Expr;
+
+CondTerm ::= (CondFactSingle) CondFact | (ConditionFactMultiple) CondTerm AND CondFact;
+
+Condition ::= (CondTermSingle) CondTerm | (ConditionTermMultiple) Condition OR CondTerm
+			| (ConditionError) error:l {: parser.report_error("Recovered condition from error to ) at line " + lleft, null);  :};
+
+
+

@@ -1,7 +1,0 @@
-INFO  09:54:48,241 - Compiling source file: /Users/djole/Desktop/PP1 projekat/test/program.mj
-INFO  09:54:48,260 - #2 program
-INFO  09:54:48,260 - #22 mojProgram
-INFO  09:54:48,260 - #22 int
-ERROR 09:54:48,260 - 
-Syntax error at line 2
-ERROR 09:54:48,261 - Fatal syntax error, cannot continue parsing at line 2

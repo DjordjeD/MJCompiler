@@ -52,38 +52,42 @@ scan with {:
 :}
 
 
-/*
-terminal PROG, CONST, SEMI, ELSE, EQUAL;
-terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE;
+
+
+terminal PROG;
+terminal BREAK, IF, ELSE, CONST, DO, WHILE, NEW;
+terminal PRINT, READ, RETURN;
+terminal VOID, CONTINUE, GOTO;
 
 terminal Integer NUMBER;
 terminal Character CHARACTER;
 terminal Boolean BOOLEAN;
 terminal String IDENT;
 
-
-*/
-
-terminal PROG, BREAK, CLASS, ELSE, CONST, IF, SWITCH, DO, WHILE, NEW;
-terminal PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, CASE;
-
-
-terminal Integer NUMBER;
-terminal Character CHARACTER;
-terminal Boolean BOOLEAN;
-terminal String IDENT;
-
-terminal PLUS, MINUS, MUL, DIV, MOD;
+terminal PLUS, MINUS, DIV,MUL, MOD;
 terminal RELEQUAL, NOTEQUAL, GREATER, GREATEREQ, LESS, LESSEQ, AND, OR;
 terminal EQUAL, INCR, DECR, SEMI, COMMA, DOT;
-terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON, RECORD;
 
-nonterminal Program, ProgramName, Declarations, Declaration, ConstDeclaration, ClassDeclaration;
-nonterminal Type, IdentAssign, ConstIdentSwitch;
-nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationSingleOrArray, VarDeclarationList;
+nonterminal Program, Declarations, Declaration, ConstDeclaration, ClassDeclaration;
+nonterminal IdentAssign, ConstIdentSwitch;
+nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationList;
 nonterminal MethodDeclList, MethodDeclaration, MethodSignature, MethodReturn, MethodTypeName;
 nonterminal FormPars, FormParsSwitch, FormParsSingleOrArray;
-nonterminal StatementList;
+
+nonterminal StatementList, Statements, Statement, SingleStatement, Label;
+nonterminal DesignatorStatement,  /* DesignatorInElement*/ ;
+nonterminal  ActPars;
+nonterminal IfHeader, ElseHeader, DoWhileHeader;
+nonterminal Addop, Mulop, Relop;
+
+nonterminal Condition, CondTerm, CondFact;
+nonterminal java.lang.Integer PcGetter;
+
+nonterminal OptionalPrint, OptionalExpr, RecordDeclaration;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor;
 
 
 precedence left ELSE;
@@ -99,7 +103,7 @@ Declarations ::= (DeclarationList) Declarations Declaration
 
 Declaration ::= (ConstDeclarationType) ConstDeclaration
                 | (VarDeclarationType) VarDeclaration
-                | (ClassDeclarationType) ClassDeclaration;
+                | (RecordDeclarationType) RecordDeclaration;
 
 
 
@@ -130,11 +134,12 @@ VarDeclarationList ::= (VarDeclarationEmpty) |	(VarDeclarationElement) VarDeclar
 
 MethodDeclList ::=   (MethodDeclarationEmpty) | (MethodDeclarationListClass) MethodDeclList MethodDeclaration;
 
-MethodDeclaration ::= (MethodDeclarationClass) MethodSignature LBRACE StatementList RBRACE; /* potencijalno problem ako
+MethodDeclaration ::= (MethodDeclarationClass) MethodSignature StatementList RBRACE;
+/* potencijalno problem ako
 ide LBRACE IZMEDJU STATEMENT LISTA*/
 
 
-MethodSignature ::= (MethodSignatureClass) MethodTypeName LPAREN FormPars RPAREN VarDeclarationList;
+MethodSignature ::= (MethodSignatureClass) MethodTypeName LPAREN FormPars RPAREN VarDeclarationList LBRACE;
 
 MethodTypeName ::=  (MethodTypeNameClass) MethodReturn IDENT:methodName;
 
@@ -152,4 +157,110 @@ FormParsSingleOrArray ::= (FormParameterNormal) Type IDENT:paramVal
 
 
 
-StatementList ::= (StatementListEmpty);
+StatementList ::= (StatementListClass) StatementList Statement | (StatementListEmpty);
+
+Statement ::= (DesignatorStatementClass) DesignatorStatement SEMI
+                                  |	(StatementRead) READ LPAREN Designator RPAREN SEMI
+                                  | (StatementPrint) PRINT LPAREN Expr OptionalPrint RPAREN SEMI
+                                  | (StatementGoto) GOTO Label SEMI
+                                  | (StatementIf) IfHeader PcGetter:trueStart Statement
+                                | (StatementIfElse) IfHeader PcGetter:trueStart Statement ElseHeader PcGetter:falseStart Statement
+                                | (StatementDoWhile) DoWhileHeader PcGetter:doWhileStart Statement WHILE LPAREN Condition RPAREN SEMI
+                                |	(StatementBreak) BREAK SEMI
+                                |	(StatementContinue) CONTINUE SEMI
+                                | (StatementReturn) RETURN OptionalExpr SEMI
+                                |	(StatementBlock) LBRACE StatementList RBRACE
+                                | (StatementLabel) Label COLON Statement;
+
+
+Label ::= IDENT: name;
+/*
+Statement ::= (StatementsLabel) Label COLON SingleStatement | (StatementMulitple) Statement Statements | (StatementListEmpty);
+
+
+SingleStatement ::= (DesignatorStatementClass) DesignatorStatement SEMI
+                    |	(StatementRead) READ LPAREN Designator RPAREN SEMI
+                    | (StatementPrint) PRINT LPAREN Expr OptionalPrint RPAREN SEMI
+                    | (StatementGoto) GOTO Label SEMI
+                    | (StatementIf) IfHeader PcGetter:trueStart SingleStatement
+                  | (StatementIfElse) IfHeader PcGetter:trueStart SingleStatement ElseHeader PcGetter:falseStart SingleStatement
+                  | (StatementDoWhile) DoWhileHeader PcGetter:doWhileStart Statement WHILE LPAREN Condition RPAREN SEMI
+                  |	(StatementBreak) BREAK SEMI
+                  |	(StatementContinue) CONTINUE SEMI
+                  | (StatementReturn) RETURN OptionalExpr SEMI;
+
+Statements ::=  (StatementBlock) LBRACE Statement RBRACE;
+*/
+OptionalExpr ::=  (OptionalExprEmpty) | (OptionalExprExpr) Expr;
+
+OptionalPrint ::= (OptionalPrintEmpty) | (OptionalPrintComma) COMMA NUMBER:number;
+
+IfHeader ::= (IfHeader) IF LPAREN Condition RPAREN;
+
+ElseHeader ::= (ElseHeader) ELSE;
+
+DoWhileHeader ::= (DoWhileHeader) DO;
+
+PcGetter ::= (PcGetter);
+
+ActPars ::= (ActParsEmpty) | (ActParsSingle) Expr |	(ActParsMultiple) ActPars COMMA Expr;
+
+RecordDeclaration ::= (RecordDeclClass) RECORD IDENT:recordName LBRACE VarDeclarationList RBRACE;
+
+
+DesignatorStatement ::= (DesignatorError)  error:l {: parser.report_error("Recovered DesignatorError from error to ; at line " + lleft, null);  :}
+                        | (DesignatorExpr) Designator LPAREN ActPars RPAREN
+                        | (DesignatorEquals) Designator EQUAL Expr
+                       | (DesignatorPlusPlus) Designator INCR | (DesignatorMinusMinus) Designator DECR;
+
+Designator ::= (DesignatorSingle) IDENT:origin | (DesignatorMultiple) Designator LSQUARE Expr RSQUARE
+|	(DesignatorField) Designator DOT IDENT:field;
+
+
+
+/* mozda treba da se izvede jos jedna smena */
+
+/*DesignatorInElement ::= (DesignatorInElementClass) Designator;*/
+
+/*Expr ::= 	(ExprSimpleClass) ExprSimple; */
+
+Expr ::= (ExprSingle) Term | (ExprMinus) MINUS Term | (ExprMultiple) Expr Addop Term;
+
+Term ::= (TermSingle) Factor | (TermMultiple) Term Mulop Factor;
+
+Factor ::= (FactorNumber) NUMBER:value
+        |	(FactorCharacter) CHARACTER:value
+        |	(FactorBoolean) BOOLEAN:value
+        |	(FactorNewScalar) NEW Type
+        | (FactorNewArray) NEW Type LSQUARE Expr RSQUARE
+        | (FactorParExpr) LPAREN Expr RPAREN
+        | (FactorDesignator) Designator
+        | (FactorDesignatorMultiple) Designator LPAREN ActPars RPAREN;
+
+
+/* da li treba DesignatorCall ::= (DesignatorCall) Designator; */
+
+Relop ::= (RelopEquals) RELEQUAL
+          |	(RelopNotEquals) NOTEQUAL
+		  |	(RelopGreater) GREATER
+		  |	(RelopGreaterEquals) GREATEREQ
+		  |	(RelopLess) LESS
+		  | (RelopLessEquals) LESSEQ;
+
+
+Addop ::= (AddopPlus) PLUS
+				|	(AddopMinus) MINUS;
+
+Mulop ::= (MulopMul) MUL
+				|	(MulopDiv) DIV
+				|	(MulopMod) MOD;
+
+CondFact ::= (CondExprSingle) Expr | (CondExprMultiple) CondFact Relop Expr;
+
+CondTerm ::= (CondFactSingle) CondFact | (ConditionFactMultiple) CondTerm AND CondFact;
+
+Condition ::= (CondTermSingle) CondTerm | (ConditionTermMultiple) Condition OR CondTerm
+			| (ConditionError) error:l {: parser.report_error("Recovered condition from error to ) at line " + lleft, null);  :};
+
+
+

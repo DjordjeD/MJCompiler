@@ -1,0 +1,57 @@
+
+   		 	    a = true;
+               		c = 5;
+               		arr = 5;
+               		a = arr;
+               		a = new Base;
+               		d = new Base;
+               		ord('c');
+               		len(a);
+               		chr(true);
+               		cnst = 5;
+               		chr.a = 5;
+
+   		a[cnst+ 10] = retMet();
+
+                   		if() {
+                   		a=123;
+                   		}
+
+                   		if( a==1 && b==0) {
+                               		a=123;
+                               		}
+
+                        if (true == 5) {
+
+                        		}
+
+                        		if (d >= d) {
+
+                        		}
+
+               program mojProgram
+               const int a=5, c=3, b=141243;
+               int a,b,c;
+               int d;
+               record Board {
+               int rows, columns;
+               bool nesto;
+               }
+               {
+                   void main (int a, double b) int a; double b; int arr[]; {
+
+
+                                       		if( a==1 && b==0) {
+                                                   		a=123;
+                                                   		}
+
+                                            if (true == 5) {
+
+                                            		}
+
+                                            		if (d >= d) {
+
+                                            		}
+                   }
+
+               }
