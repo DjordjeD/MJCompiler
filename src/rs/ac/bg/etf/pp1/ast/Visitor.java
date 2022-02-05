@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 26/0/2022 17:8:12
+// 4/1/2022 19:34:57
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -25,13 +25,13 @@ public interface Visitor {
     public void visit(Condition Condition);
     public void visit(Statements Statements);
     public void visit(ConstDeclaration ConstDeclaration);
-    public void visit(FormParsSwitch FormParsSwitch);
     public void visit(Label Label);
+    public void visit(FormParsSwitch FormParsSwitch);
     public void visit(FormParsSingleOrArray FormParsSingleOrArray);
     public void visit(Declarations Declarations);
     public void visit(Expr Expr);
-    public void visit(OptionalPrint OptionalPrint);
     public void visit(VarDeclarationList VarDeclarationList);
+    public void visit(OptionalPrint OptionalPrint);
     public void visit(ClassDeclaration ClassDeclaration);
     public void visit(ActPars ActPars);
     public void visit(MethodTypeName MethodTypeName);
@@ -46,10 +46,10 @@ public interface Visitor {
     public void visit(SingleStatement SingleStatement);
     public void visit(FormPars FormPars);
     public void visit(ConditionError ConditionError);
-    public void visit(ConditionTermMultiple ConditionTermMultiple);
+    public void visit(ConditionMultiple ConditionMultiple);
+    public void visit(ConditionSingle ConditionSingle);
+    public void visit(CondTermMultiple CondTermMultiple);
     public void visit(CondTermSingle CondTermSingle);
-    public void visit(ConditionFactMultiple ConditionFactMultiple);
-    public void visit(CondFactSingle CondFactSingle);
     public void visit(CondExprMultiple CondExprMultiple);
     public void visit(CondExprSingle CondExprSingle);
     public void visit(MulopMod MulopMod);
@@ -76,27 +76,30 @@ public interface Visitor {
     public void visit(ExprMultiple ExprMultiple);
     public void visit(ExprMinus ExprMinus);
     public void visit(ExprSingle ExprSingle);
-    public void visit(DesignatorField DesignatorField);
     public void visit(DesignatorMultiple DesignatorMultiple);
+    public void visit(DesignatorField DesignatorField);
     public void visit(DesignatorSingle DesignatorSingle);
     public void visit(DesignatorMinusMinus DesignatorMinusMinus);
     public void visit(DesignatorPlusPlus DesignatorPlusPlus);
     public void visit(DesignatorEquals DesignatorEquals);
     public void visit(DesignatorExpr DesignatorExpr);
     public void visit(DesignatorError DesignatorError);
-    public void visit(RecordDeclClass RecordDeclClass);
+    public void visit(RecordBody RecordBody);
+    public void visit(RecordLeft RecordLeft);
+    public void visit(RecordDefinition RecordDefinition);
     public void visit(ActParsMultiple ActParsMultiple);
     public void visit(ActParsSingle ActParsSingle);
     public void visit(ActParsEmpty ActParsEmpty);
     public void visit(PcGetter PcGetter);
-    public void visit(DoWhileHeader DoWhileHeader);
     public void visit(ElseHeader ElseHeader);
     public void visit(IfHeader IfHeader);
     public void visit(OptionalPrintComma OptionalPrintComma);
     public void visit(OptionalPrintEmpty OptionalPrintEmpty);
     public void visit(OptionalExprExpr OptionalExprExpr);
     public void visit(OptionalExprEmpty OptionalExprEmpty);
-    public void visit(LabelDerived1 LabelDerived1);
+    public void visit(LabelDefinition LabelDefinition);
+    public void visit(DoWhileBodyEnd DoWhileBodyEnd);
+    public void visit(DoWhileBodyStart DoWhileBodyStart);
     public void visit(StatementLabel StatementLabel);
     public void visit(StatementBlock StatementBlock);
     public void visit(StatementReturn StatementReturn);

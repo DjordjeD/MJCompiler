@@ -72,22 +72,23 @@ terminal LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, QUESTION, COLON, RECO
 nonterminal Program, Declarations, Declaration, ConstDeclaration, ClassDeclaration;
 nonterminal IdentAssign, ConstIdentSwitch;
 nonterminal VarDeclaration, VarDeclarationSwitch, VarDeclarationList;
-nonterminal MethodDeclList, MethodDeclaration, MethodSignature, MethodReturn, MethodTypeName;
+nonterminal MethodDeclList, MethodDeclaration, MethodSignature;
 nonterminal FormPars, FormParsSwitch, FormParsSingleOrArray;
 
-nonterminal StatementList, Statements, Statement, SingleStatement, Label;
+nonterminal StatementList, Statements, Statement, SingleStatement;
 nonterminal DesignatorStatement,  /* DesignatorInElement*/ ;
 nonterminal  ActPars;
-nonterminal IfHeader, ElseHeader, DoWhileHeader;
+nonterminal IfHeader, ElseHeader, DoWhileBodyEnd, DoWhileBodyStart;
 nonterminal Addop, Mulop, Relop;
 
-nonterminal Condition, CondTerm, CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm ;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj CondFact ;
 nonterminal java.lang.Integer PcGetter;
 
-nonterminal OptionalPrint, OptionalExpr, RecordDeclaration;
+nonterminal OptionalPrint, RecordBody;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator, MethodTypeName, Label, RecordDeclaration, RecordLeft;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, MethodReturn,OptionalExpr;
 
 
 precedence left ELSE;
@@ -135,6 +136,7 @@ VarDeclarationList ::= (VarDeclarationEmpty) |	(VarDeclarationElement) VarDeclar
 MethodDeclList ::=   (MethodDeclarationEmpty) | (MethodDeclarationListClass) MethodDeclList MethodDeclaration;
 
 MethodDeclaration ::= (MethodDeclarationClass) MethodSignature StatementList RBRACE;
+
 /* potencijalno problem ako
 ide LBRACE IZMEDJU STATEMENT LISTA*/
 
@@ -165,32 +167,17 @@ Statement ::= (DesignatorStatementClass) DesignatorStatement SEMI
                                   | (StatementGoto) GOTO Label SEMI
                                   | (StatementIf) IfHeader PcGetter:trueStart Statement
                                 | (StatementIfElse) IfHeader PcGetter:trueStart Statement ElseHeader PcGetter:falseStart Statement
-                                | (StatementDoWhile) DoWhileHeader PcGetter:doWhileStart Statement WHILE LPAREN Condition RPAREN SEMI
+                                | (StatementDoWhile) DoWhileBodyStart Statement DoWhileBodyEnd LPAREN Condition RPAREN SEMI
                                 |	(StatementBreak) BREAK SEMI
                                 |	(StatementContinue) CONTINUE SEMI
                                 | (StatementReturn) RETURN OptionalExpr SEMI
                                 |	(StatementBlock) LBRACE StatementList RBRACE
                                 | (StatementLabel) Label COLON Statement;
 
+DoWhileBodyStart ::= (DoWhileBodyStart) DO;
+DoWhileBodyEnd ::= (DoWhileBodyEnd) WHILE;
+Label ::= (LabelDefinition) IDENT: name;
 
-Label ::= IDENT: name;
-/*
-Statement ::= (StatementsLabel) Label COLON SingleStatement | (StatementMulitple) Statement Statements | (StatementListEmpty);
-
-
-SingleStatement ::= (DesignatorStatementClass) DesignatorStatement SEMI
-                    |	(StatementRead) READ LPAREN Designator RPAREN SEMI
-                    | (StatementPrint) PRINT LPAREN Expr OptionalPrint RPAREN SEMI
-                    | (StatementGoto) GOTO Label SEMI
-                    | (StatementIf) IfHeader PcGetter:trueStart SingleStatement
-                  | (StatementIfElse) IfHeader PcGetter:trueStart SingleStatement ElseHeader PcGetter:falseStart SingleStatement
-                  | (StatementDoWhile) DoWhileHeader PcGetter:doWhileStart Statement WHILE LPAREN Condition RPAREN SEMI
-                  |	(StatementBreak) BREAK SEMI
-                  |	(StatementContinue) CONTINUE SEMI
-                  | (StatementReturn) RETURN OptionalExpr SEMI;
-
-Statements ::=  (StatementBlock) LBRACE Statement RBRACE;
-*/
 OptionalExpr ::=  (OptionalExprEmpty) | (OptionalExprExpr) Expr;
 
 OptionalPrint ::= (OptionalPrintEmpty) | (OptionalPrintComma) COMMA NUMBER:number;
@@ -199,23 +186,24 @@ IfHeader ::= (IfHeader) IF LPAREN Condition RPAREN;
 
 ElseHeader ::= (ElseHeader) ELSE;
 
-DoWhileHeader ::= (DoWhileHeader) DO;
-
 PcGetter ::= (PcGetter);
 
 ActPars ::= (ActParsEmpty) | (ActParsSingle) Expr |	(ActParsMultiple) ActPars COMMA Expr;
 
-RecordDeclaration ::= (RecordDeclClass) RECORD IDENT:recordName LBRACE VarDeclarationList RBRACE;
+RecordDeclaration ::= (RecordDefinition) RecordLeft RecordBody;
 
+RecordLeft ::= (RecordLeft) RECORD IDENT:recordName;
+
+RecordBody ::= (RecordBody) LBRACE VarDeclarationList RBRACE;
 
 DesignatorStatement ::= (DesignatorError)  error:l {: parser.report_error("Recovered DesignatorError from error to ; at line " + lleft, null);  :}
                         | (DesignatorExpr) Designator LPAREN ActPars RPAREN
                         | (DesignatorEquals) Designator EQUAL Expr
                        | (DesignatorPlusPlus) Designator INCR | (DesignatorMinusMinus) Designator DECR;
 
-Designator ::= (DesignatorSingle) IDENT:origin | (DesignatorMultiple) Designator LSQUARE Expr RSQUARE
-|	(DesignatorField) Designator DOT IDENT:field;
-
+Designator ::= (DesignatorSingle) IDENT:origin
+            |	(DesignatorField) Designator DOT IDENT:field
+        | (DesignatorMultiple) Designator LSQUARE Expr RSQUARE;
 
 
 /* mozda treba da se izvede jos jedna smena */
@@ -257,10 +245,10 @@ Mulop ::= (MulopMul) MUL
 
 CondFact ::= (CondExprSingle) Expr | (CondExprMultiple) CondFact Relop Expr;
 
-CondTerm ::= (CondFactSingle) CondFact | (ConditionFactMultiple) CondTerm AND CondFact;
+CondTerm ::= (CondTermSingle) CondFact | (CondTermMultiple) CondTerm AND CondFact;
 
-Condition ::= (CondTermSingle) CondTerm | (ConditionTermMultiple) Condition OR CondTerm
-			| (ConditionError) error:l {: parser.report_error("Recovered condition from error to ) at line " + lleft, null);  :};
+Condition ::= (ConditionSingle) CondTerm | (ConditionMultiple) Condition OR CondTerm
+			| (ConditionError) error:l {: parser.report_error("Recovered ConditionError ) at line " + lleft, null);  :};
 
 
 

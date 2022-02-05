@@ -82,8 +82,6 @@ nonterminal VarDeclarationList VarDeclarationList;
 nonterminal MethodDeclList MethodDeclList;
 nonterminal MethodDeclaration MethodDeclaration;
 nonterminal MethodSignature MethodSignature;
-nonterminal MethodReturn MethodReturn;
-nonterminal MethodTypeName MethodTypeName;
 nonterminal FormPars FormPars;
 nonterminal FormParsSwitch FormParsSwitch;
 nonterminal FormParsSingleOrArray FormParsSingleOrArray;
@@ -92,27 +90,25 @@ nonterminal StatementList StatementList;
 nonterminal Statements Statements;
 nonterminal Statement Statement;
 nonterminal SingleStatement SingleStatement;
-nonterminal Label Label;
 nonterminal DesignatorStatement DesignatorStatement  /* DesignatorInElement*/ ;
 nonterminal  ActPars ActPars;
 nonterminal IfHeader IfHeader;
 nonterminal ElseHeader ElseHeader;
-nonterminal DoWhileHeader DoWhileHeader;
+nonterminal DoWhileBodyEnd DoWhileBodyEnd;
+nonterminal DoWhileBodyStart DoWhileBodyStart;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
 nonterminal Relop Relop;
 
-nonterminal Condition Condition;
-nonterminal CondTerm CondTerm;
-nonterminal CondFact CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm ;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj CondFact ;
 nonterminal java.lang.Integer PcGetter;
 
 nonterminal OptionalPrint OptionalPrint;
-nonterminal OptionalExpr OptionalExpr;
-nonterminal RecordDeclaration RecordDeclaration;
+nonterminal RecordBody RecordBody;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator, MethodTypeName, Label, RecordDeclaration, RecordLeft;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, MethodReturn,OptionalExpr;
 
 
 precedence left ELSE;
@@ -160,6 +156,7 @@ VarDeclarationList ::= (VarDeclarationEmpty) {: RESULT=new VarDeclarationEmpty()
 MethodDeclList ::=   (MethodDeclarationEmpty) {: RESULT=new MethodDeclarationEmpty(); :} | (MethodDeclarationListClass) MethodDeclList:M1 MethodDeclaration:M2 {: RESULT=new MethodDeclarationListClass(M1, M2); RESULT.setLine(M1left); :};
 
 MethodDeclaration ::= (MethodDeclarationClass) MethodSignature:M1 StatementList:S2 RBRACE {: RESULT=new MethodDeclarationClass(M1, S2); RESULT.setLine(M1left); :};
+
 /* potencijalno problem ako
 ide LBRACE IZMEDJU STATEMENT LISTA*/
 
@@ -190,32 +187,17 @@ Statement ::= (DesignatorStatementClass) DesignatorStatement:D1 SEMI {: RESULT=n
                                   | (StatementGoto) GOTO Label:L1 SEMI {: RESULT=new StatementGoto(L1); RESULT.setLine(L1left); :}
                                   | (StatementIf) IfHeader:I1 PcGetter:trueStart Statement:S2 {: RESULT=new StatementIf(I1, trueStart, S2); RESULT.setLine(I1left); :}
                                 | (StatementIfElse) IfHeader:I1 PcGetter:trueStart Statement:S2 ElseHeader:E3 PcGetter:falseStart Statement:S4 {: RESULT=new StatementIfElse(I1, trueStart, S2, E3, falseStart, S4); RESULT.setLine(I1left); :}
-                                | (StatementDoWhile) DoWhileHeader:D1 PcGetter:doWhileStart Statement:S2 WHILE LPAREN Condition:C3 RPAREN SEMI {: RESULT=new StatementDoWhile(D1, doWhileStart, S2, C3); RESULT.setLine(D1left); :}
+                                | (StatementDoWhile) DoWhileBodyStart:D1 Statement:S2 DoWhileBodyEnd:D3 LPAREN Condition:C4 RPAREN SEMI {: RESULT=new StatementDoWhile(D1, S2, D3, C4); RESULT.setLine(D1left); :}
                                 |	(StatementBreak) BREAK SEMI {: RESULT=new StatementBreak(); :}
                                 |	(StatementContinue) CONTINUE SEMI {: RESULT=new StatementContinue(); :}
                                 | (StatementReturn) RETURN OptionalExpr:O1 SEMI {: RESULT=new StatementReturn(O1); RESULT.setLine(O1left); :}
                                 |	(StatementBlock) LBRACE StatementList:S1 RBRACE {: RESULT=new StatementBlock(S1); RESULT.setLine(S1left); :}
                                 | (StatementLabel) Label:L1 COLON Statement:S2 {: RESULT=new StatementLabel(L1, S2); RESULT.setLine(L1left); :};
 
+DoWhileBodyStart ::= (DoWhileBodyStart) DO {: RESULT=new DoWhileBodyStart(); :};
+DoWhileBodyEnd ::= (DoWhileBodyEnd) WHILE {: RESULT=new DoWhileBodyEnd(); :};
+Label ::= (LabelDefinition) IDENT: name {: RESULT=new LabelDefinition(name); RESULT.setLine(nameleft); :};
 
-Label ::= IDENT: name {: RESULT=new LabelDerived1(name); RESULT.setLine(nameleft); :};
-/*
-Statement ::= (StatementsLabel) Label COLON SingleStatement | (StatementMulitple) Statement Statements | (StatementListEmpty);
-
-
-SingleStatement ::= (DesignatorStatementClass) DesignatorStatement SEMI
-                    |	(StatementRead) READ LPAREN Designator RPAREN SEMI
-                    | (StatementPrint) PRINT LPAREN Expr OptionalPrint RPAREN SEMI
-                    | (StatementGoto) GOTO Label SEMI
-                    | (StatementIf) IfHeader PcGetter:trueStart SingleStatement
-                  | (StatementIfElse) IfHeader PcGetter:trueStart SingleStatement ElseHeader PcGetter:falseStart SingleStatement
-                  | (StatementDoWhile) DoWhileHeader PcGetter:doWhileStart Statement WHILE LPAREN Condition RPAREN SEMI
-                  |	(StatementBreak) BREAK SEMI
-                  |	(StatementContinue) CONTINUE SEMI
-                  | (StatementReturn) RETURN OptionalExpr SEMI;
-
-Statements ::=  (StatementBlock) LBRACE Statement RBRACE;
-*/
 OptionalExpr ::=  (OptionalExprEmpty) {: RESULT=new OptionalExprEmpty(); :} | (OptionalExprExpr) Expr:E1 {: RESULT=new OptionalExprExpr(E1); RESULT.setLine(E1left); :};
 
 OptionalPrint ::= (OptionalPrintEmpty) {: RESULT=new OptionalPrintEmpty(); :} | (OptionalPrintComma) COMMA NUMBER:number {: RESULT=new OptionalPrintComma(number); RESULT.setLine(numberleft); :};
@@ -224,23 +206,24 @@ IfHeader ::= (IfHeader) IF LPAREN Condition:C1 RPAREN {: RESULT=new IfHeader(C1)
 
 ElseHeader ::= (ElseHeader) ELSE {: RESULT=new ElseHeader(); :};
 
-DoWhileHeader ::= (DoWhileHeader) DO {: RESULT=new DoWhileHeader(); :};
-
 PcGetter ::= (PcGetter) {: RESULT=new PcGetter(); :};
 
 ActPars ::= (ActParsEmpty) {: RESULT=new ActParsEmpty(); :} | (ActParsSingle) Expr:E1 {: RESULT=new ActParsSingle(E1); RESULT.setLine(E1left); :} |	(ActParsMultiple) ActPars:A1 COMMA Expr:E2 {: RESULT=new ActParsMultiple(A1, E2); RESULT.setLine(A1left); :};
 
-RecordDeclaration ::= (RecordDeclClass) RECORD IDENT:recordName LBRACE VarDeclarationList:V1 RBRACE {: RESULT=new RecordDeclClass(recordName, V1); RESULT.setLine(recordNameleft); :};
+RecordDeclaration ::= (RecordDefinition) RecordLeft:R1 RecordBody:R2 {: RESULT=new RecordDefinition(R1, R2); RESULT.setLine(R1left); :};
 
+RecordLeft ::= (RecordLeft) RECORD IDENT:recordName {: RESULT=new RecordLeft(recordName); RESULT.setLine(recordNameleft); :};
+
+RecordBody ::= (RecordBody) LBRACE VarDeclarationList:V1 RBRACE {: RESULT=new RecordBody(V1); RESULT.setLine(V1left); :};
 
 DesignatorStatement ::= (DesignatorError)  error:l {: parser.report_error("Recovered DesignatorError from error to ; at line " + lleft, null);  :} {: RESULT=new DesignatorError(); :}
                         | (DesignatorExpr) Designator:D1 LPAREN ActPars:A2 RPAREN {: RESULT=new DesignatorExpr(D1, A2); RESULT.setLine(D1left); :}
                         | (DesignatorEquals) Designator:D1 EQUAL Expr:E2 {: RESULT=new DesignatorEquals(D1, E2); RESULT.setLine(D1left); :}
                        | (DesignatorPlusPlus) Designator:D1 INCR {: RESULT=new DesignatorPlusPlus(D1); RESULT.setLine(D1left); :} | (DesignatorMinusMinus) Designator:D1 DECR {: RESULT=new DesignatorMinusMinus(D1); RESULT.setLine(D1left); :};
 
-Designator ::= (DesignatorSingle) IDENT:origin {: RESULT=new DesignatorSingle(origin); RESULT.setLine(originleft); :} | (DesignatorMultiple) Designator:D1 LSQUARE Expr:E2 RSQUARE {: RESULT=new DesignatorMultiple(D1, E2); RESULT.setLine(D1left); :}
-|	(DesignatorField) Designator:D1 DOT IDENT:field {: RESULT=new DesignatorField(D1, field); RESULT.setLine(D1left); :};
-
+Designator ::= (DesignatorSingle) IDENT:origin {: RESULT=new DesignatorSingle(origin); RESULT.setLine(originleft); :}
+            |	(DesignatorField) Designator:D1 DOT IDENT:field {: RESULT=new DesignatorField(D1, field); RESULT.setLine(D1left); :}
+        | (DesignatorMultiple) Designator:D1 LSQUARE Expr:E2 RSQUARE {: RESULT=new DesignatorMultiple(D1, E2); RESULT.setLine(D1left); :};
 
 
 /* mozda treba da se izvede jos jedna smena */
@@ -282,10 +265,10 @@ Mulop ::= (MulopMul) MUL {: RESULT=new MulopMul(); :}
 
 CondFact ::= (CondExprSingle) Expr:E1 {: RESULT=new CondExprSingle(E1); RESULT.setLine(E1left); :} | (CondExprMultiple) CondFact:C1 Relop:R2 Expr:E3 {: RESULT=new CondExprMultiple(C1, R2, E3); RESULT.setLine(C1left); :};
 
-CondTerm ::= (CondFactSingle) CondFact:C1 {: RESULT=new CondFactSingle(C1); RESULT.setLine(C1left); :} | (ConditionFactMultiple) CondTerm:C1 AND CondFact:C2 {: RESULT=new ConditionFactMultiple(C1, C2); RESULT.setLine(C1left); :};
+CondTerm ::= (CondTermSingle) CondFact:C1 {: RESULT=new CondTermSingle(C1); RESULT.setLine(C1left); :} | (CondTermMultiple) CondTerm:C1 AND CondFact:C2 {: RESULT=new CondTermMultiple(C1, C2); RESULT.setLine(C1left); :};
 
-Condition ::= (CondTermSingle) CondTerm:C1 {: RESULT=new CondTermSingle(C1); RESULT.setLine(C1left); :} | (ConditionTermMultiple) Condition:C1 OR CondTerm:C2 {: RESULT=new ConditionTermMultiple(C1, C2); RESULT.setLine(C1left); :}
-			| (ConditionError) error:l {: parser.report_error("Recovered condition from error to ) at line " + lleft, null);  :} {: RESULT=new ConditionError(); :};
+Condition ::= (ConditionSingle) CondTerm:C1 {: RESULT=new ConditionSingle(C1); RESULT.setLine(C1left); :} | (ConditionMultiple) Condition:C1 OR CondTerm:C2 {: RESULT=new ConditionMultiple(C1, C2); RESULT.setLine(C1left); :}
+			| (ConditionError) error:l {: parser.report_error("Recovered ConditionError ) at line " + lleft, null);  :} {: RESULT=new ConditionError(); :};
 
 
 

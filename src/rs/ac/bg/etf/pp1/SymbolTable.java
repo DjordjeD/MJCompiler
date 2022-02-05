@@ -11,6 +11,8 @@ public class SymbolTable extends Tab{
 
     public static void init() {
         Tab.init();
+        Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool" , boolType ));
+
     }
 
     public static void openScope() {
@@ -35,10 +37,7 @@ public class SymbolTable extends Tab{
     }
 
     public static boolean alreadyDefined(String name) {
-        if (Tab.currentScope.findSymbol(name) != null)
-            return true;
-
-        return false;
+        return (Tab.currentScope.findSymbol(name) != null); //returns true if its found
     }
 
     public static void chainLocalSymbols(Obj outerScopeObj) {

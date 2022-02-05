@@ -43,11 +43,7 @@ program test301
 		print(bodovi);
 			
 		read(bodovi);
-		bt = true;
-		
-		print(bt ? bodovi : bodovi + 10);
-		print(false ? bodovi + 20 : bodovi + 30);
-		print(bt ? '+' : '-');
+		print(bodovi);
 	}
 }
 
