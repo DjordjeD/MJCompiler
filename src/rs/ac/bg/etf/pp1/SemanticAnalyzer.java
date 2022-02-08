@@ -230,6 +230,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
             reportError("Multiple definition record" + recordName, RecordLeft);
         }
         SymbolTable.openScope();
+        SymbolTable.recordScope = SymbolTable.currentScope();
 
     }
 
@@ -317,7 +318,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
             reportError("Expr is not int,char bool", StatementRead);
             return;
         }
-        if (!(StatementRead.getDesignator().obj.getKind() == Obj.Elem || StatementRead.getDesignator().obj.getKind() == Obj.Var)) {
+        if (!(StatementRead.getDesignator().obj.getKind() == Obj.Elem || StatementRead.getDesignator().obj.getKind() == Obj.Var || StatementRead.getDesignator().obj.getKind() == Obj.Fld)) {
             reportError("Designator is not elem or var", StatementRead);
             return;
         }
@@ -334,7 +335,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
             reportError("Designator is not int", DesignatorMinusMinus);
             return;
         }
-        if (!(DesignatorMinusMinus.getDesignator().obj.getKind() == Obj.Elem || DesignatorMinusMinus.getDesignator().obj.getKind() == Obj.Var)) {
+        if (!(DesignatorMinusMinus.getDesignator().obj.getKind() == Obj.Elem || DesignatorMinusMinus.getDesignator().obj.getKind() == Obj.Var || DesignatorMinusMinus.getDesignator().obj.getKind() == Obj.Fld)) {
             reportError("Designator is not elem or var", DesignatorMinusMinus);
             return;
         }
@@ -347,7 +348,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
             reportError("Designator is not int", DesignatorPlusPlus);
             return;
         }
-        if (!(DesignatorPlusPlus.getDesignator().obj.getKind() == Obj.Elem || DesignatorPlusPlus.getDesignator().obj.getKind() == Obj.Var)) {
+        if (!(DesignatorPlusPlus.getDesignator().obj.getKind() == Obj.Elem || DesignatorPlusPlus.getDesignator().obj.getKind() == Obj.Var || DesignatorPlusPlus.getDesignator().obj.getKind() == Obj.Fld)) {
             reportError("Designator is not elem or var", DesignatorPlusPlus);
             return;
         }
@@ -633,7 +634,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     public void visit(DesignatorField DesignatorField) {
         super.visit(DesignatorField);
         Struct classType = DesignatorField.getDesignator().obj.getType();
-        String field = DesignatorField.getField();
+        String field = DesignatorField.getDesignatorRecordField().obj.getName();
         Obj found = SymbolTable.noObj;
         //Obj obj = SymbolTable.find(field);
 
@@ -658,6 +659,17 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 
         DesignatorField.obj = found; //for records
+    }
+
+    @Override
+    public void visit(DesignatorRecordField DesignatorRecordField) {
+        super.visit(DesignatorRecordField);
+        String name = DesignatorRecordField.getField();
+        DesignatorRecordField.obj = SymbolTable.findRecordScope(name);
+
+        if (DesignatorRecordField.obj == SymbolTable.noObj)
+            reportError("Symbol cannot be resolved" + DesignatorRecordField.getField(), null);
+
     }
 
     @Override

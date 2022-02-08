@@ -107,7 +107,7 @@ nonterminal java.lang.Integer PcGetter;
 nonterminal OptionalPrint OptionalPrint;
 nonterminal RecordBody RecordBody;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator, MethodTypeName, Label, RecordDeclaration, RecordLeft;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator, MethodTypeName, Label, RecordDeclaration, RecordLeft, DesignatorRecordField;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, MethodReturn,OptionalExpr;
 
 
@@ -222,11 +222,11 @@ DesignatorStatement ::= (DesignatorError)  error:l {: parser.report_error("Recov
                        | (DesignatorPlusPlus) Designator:D1 INCR {: RESULT=new DesignatorPlusPlus(D1); RESULT.setLine(D1left); :} | (DesignatorMinusMinus) Designator:D1 DECR {: RESULT=new DesignatorMinusMinus(D1); RESULT.setLine(D1left); :};
 
 Designator ::= (DesignatorSingle) IDENT:origin {: RESULT=new DesignatorSingle(origin); RESULT.setLine(originleft); :}
-            |	(DesignatorField) Designator:D1 DOT IDENT:field {: RESULT=new DesignatorField(D1, field); RESULT.setLine(D1left); :}
+            |	(DesignatorField) Designator:D1 DesignatorRecordField:D2 {: RESULT=new DesignatorField(D1, D2); RESULT.setLine(D1left); :}
         | (DesignatorMultiple) Designator:D1 LSQUARE Expr:E2 RSQUARE {: RESULT=new DesignatorMultiple(D1, E2); RESULT.setLine(D1left); :};
 
 
-/* mozda treba da se izvede jos jedna smena */
+DesignatorRecordField ::= (DesignatorRecordField) DOT IDENT:field {: RESULT=new DesignatorRecordField(field); RESULT.setLine(fieldleft); :};
 
 /*DesignatorInElement ::= (DesignatorInElementClass) Designator;*/
 

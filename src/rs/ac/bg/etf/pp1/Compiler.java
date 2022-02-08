@@ -5,9 +5,11 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import rs.ac.bg.etf.pp1.ast.Program;
 import rs.ac.bg.etf.pp1.util.Log4JUtils;
+import rs.etf.pp1.mj.runtime.Code;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 
 public class Compiler {
@@ -52,24 +54,22 @@ public class Compiler {
                 System.out.println("=====================SYMBOL TABLE CONTENTS=========================");
                 SymbolTable.dump();
 
-//                if (!semanticCheck.errorOccured()) {
-//
-//                    System.out.println("=====================CODE GENERATION=========================");
-//
-//                    CodeGenerator codeGenerator = new CodeGenerator();
-//                    prog.traverseBottomUp(codeGenerator);
-//
-//                    File objectFile = new File(args[1]);
-//                    if (objectFile.exists()) {
-//                        objectFile.delete();
-//                    }
-//
-//                    FileOutputStream fileOutputStream = new FileOutputStream(objectFile);
-//                    Code.dataSize = codeGenerator.getDataSize();
-//                    Code.mainPc = codeGenerator.getMainPc();
-//                    Code.write(fileOutputStream);
-//                    fileOutputStream.close();
-//                }
+                System.out.println("=====================CODE GENERATION=========================");
+
+                CodeGenerator codeGenerator = new CodeGenerator();
+                prog.traverseBottomUp(codeGenerator);
+
+                File objectFile = new File(args[1]);
+                if (objectFile.exists()) {
+                    objectFile.delete();
+                }
+
+                FileOutputStream fileOutputStream = new FileOutputStream(objectFile);
+                Code.dataSize = codeGenerator.getDataSize();
+                Code.mainPc = codeGenerator.getMainPc();
+                Code.write(fileOutputStream);
+                fileOutputStream.close();
+
             }
         }
     }

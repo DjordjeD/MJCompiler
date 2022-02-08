@@ -8,7 +8,7 @@ import rs.etf.pp1.symboltable.concepts.Struct;
 public class SymbolTable extends Tab{
 
     public static final Struct boolType = new Struct(Struct.Bool);
-
+    public static Scope recordScope;
     public static void init() {
         Tab.init();
         Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool" , boolType ));
@@ -34,6 +34,17 @@ public class SymbolTable extends Tab{
 
     public static Obj find(String name) {
         return Tab.find(name);
+    }
+
+    public static Obj findRecordScope(String name) {
+        Obj resultObj = null;
+        for (Scope s = recordScope; s != null; s = s.getOuter()) {
+            if (s.getLocals() != null) {
+                resultObj = s.getLocals().searchKey(name);
+                if (resultObj != null) break;
+            }
+        }
+        return (resultObj != null) ? resultObj : noObj;
     }
 
     public static boolean alreadyDefined(String name) {

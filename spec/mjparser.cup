@@ -87,7 +87,7 @@ nonterminal java.lang.Integer PcGetter;
 
 nonterminal OptionalPrint, RecordBody;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator, MethodTypeName, Label, RecordDeclaration, RecordLeft;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName,VarDeclarationSingleOrArray, Designator, MethodTypeName, Label, RecordDeclaration, RecordLeft, DesignatorRecordField;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, MethodReturn,OptionalExpr;
 
 
@@ -202,11 +202,11 @@ DesignatorStatement ::= (DesignatorError)  error:l {: parser.report_error("Recov
                        | (DesignatorPlusPlus) Designator INCR | (DesignatorMinusMinus) Designator DECR;
 
 Designator ::= (DesignatorSingle) IDENT:origin
-            |	(DesignatorField) Designator DOT IDENT:field
+            |	(DesignatorField) Designator DesignatorRecordField
         | (DesignatorMultiple) Designator LSQUARE Expr RSQUARE;
 
 
-/* mozda treba da se izvede jos jedna smena */
+DesignatorRecordField ::= (DesignatorRecordField) DOT IDENT:field;
 
 /*DesignatorInElement ::= (DesignatorInElementClass) Designator;*/
 
