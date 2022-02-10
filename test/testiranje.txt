@@ -1,57 +1,68 @@
+// 2020_t2: class fields (v1)
+// just for code-generating (do not execute)
 
-   		 	    a = true;
-               		c = 5;
-               		arr = 5;
-               		a = arr;
-               		a = new Base;
-               		d = new Base;
-               		ord('c');
-               		len(a);
-               		chr(true);
-               		cnst = 5;
-               		chr.a = 5;
+program ABC
 
-   		a[cnst+ 10] = retMet();
+record A {
+	int i, j, k;
+	int niz[];
+}
 
-                   		if() {
-                   		a=123;
-                   		}
-
-                   		if( a==1 && b==0) {
-                               		a=123;
-                               		}
-
-                        if (true == 5) {
-
-                        		}
-
-                        		if (d >= d) {
-
-                        		}
-
-               program mojProgram
-               const int a=5, c=3, b=141243;
-               int a,b,c;
-               int d;
-               record Board {
-               int rows, columns;
-               bool nesto;
-               }
-               {
-                   void main (int a, double b) int a; double b; int arr[]; {
+ {
+    int funkcija (int a, int b) int var1, var2;
+    {
+        return var1 + var2 + 4;
+    }
+	void main()
+	    int a,b;
+	{
 
 
-                                       		if( a==1 && b==0) {
-                                                   		a=123;
-                                                   		}
+        if(a==505 && a==503)
+        {
+                    b=22;
+        }
+         if(a==400 || a==402)
+                {
+                            b=22;
+                }
 
-                                            if (true == 5) {
 
-                                            		}
+         if(a==100 || a==105 || a==155)
+                {
+                           b=25;
+                }
+          if(a==605 && a==603 && a<600)
+                    {
+                                b=22;
+                    }
 
-                                            		if (d >= d) {
+         if(a==205 || a==203 && a>210)
+                        {
+                                   b=33;
+                        }
 
-                                            		}
-                   }
+             if(a==303 && a>310 || a==350)
+                                  {
+                                             b=44;
+                                  }
 
-               }
+                if(a==5){
+
+                        b=4;
+                            if(b<7){
+                                a=150;
+                            } else {
+                                a=  250;
+                            }
+                          b=777;
+                        }
+                do{
+          			b=55;
+          		}while (a < 3);
+
+
+
+	}
+
+}

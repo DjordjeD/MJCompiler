@@ -95,14 +95,13 @@ nonterminal  ActPars ActPars;
 nonterminal IfHeader IfHeader;
 nonterminal ElseHeader ElseHeader;
 nonterminal DoWhileBodyEnd DoWhileBodyEnd;
-nonterminal DoWhileBodyStart DoWhileBodyStart;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
 nonterminal Relop Relop;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm ;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CondFact ;
-nonterminal java.lang.Integer PcGetter;
+nonterminal java.lang.Integer PcGetter,DoWhileBodyStart;
 
 nonterminal OptionalPrint OptionalPrint;
 nonterminal RecordBody RecordBody;
@@ -187,7 +186,7 @@ Statement ::= (DesignatorStatementClass) DesignatorStatement:D1 SEMI {: RESULT=n
                                   | (StatementGoto) GOTO Label:L1 SEMI {: RESULT=new StatementGoto(L1); RESULT.setLine(L1left); :}
                                   | (StatementIf) IfHeader:I1 PcGetter:trueStart Statement:S2 {: RESULT=new StatementIf(I1, trueStart, S2); RESULT.setLine(I1left); :}
                                 | (StatementIfElse) IfHeader:I1 PcGetter:trueStart Statement:S2 ElseHeader:E3 PcGetter:falseStart Statement:S4 {: RESULT=new StatementIfElse(I1, trueStart, S2, E3, falseStart, S4); RESULT.setLine(I1left); :}
-                                | (StatementDoWhile) DoWhileBodyStart:D1 Statement:S2 DoWhileBodyEnd:D3 LPAREN Condition:C4 RPAREN SEMI {: RESULT=new StatementDoWhile(D1, S2, D3, C4); RESULT.setLine(D1left); :}
+                                | (StatementDoWhile) DoWhileBodyStart:doWhileStart Statement:S1 DoWhileBodyEnd:D2 LPAREN Condition:C3 RPAREN SEMI {: RESULT=new StatementDoWhile(doWhileStart, S1, D2, C3); RESULT.setLine(doWhileStartleft); :}
                                 |	(StatementBreak) BREAK SEMI {: RESULT=new StatementBreak(); :}
                                 |	(StatementContinue) CONTINUE SEMI {: RESULT=new StatementContinue(); :}
                                 | (StatementReturn) RETURN OptionalExpr:O1 SEMI {: RESULT=new StatementReturn(O1); RESULT.setLine(O1left); :}

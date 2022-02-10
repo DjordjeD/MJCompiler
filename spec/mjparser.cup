@@ -78,12 +78,12 @@ nonterminal FormPars, FormParsSwitch, FormParsSingleOrArray;
 nonterminal StatementList, Statements, Statement, SingleStatement;
 nonterminal DesignatorStatement,  /* DesignatorInElement*/ ;
 nonterminal  ActPars;
-nonterminal IfHeader, ElseHeader, DoWhileBodyEnd, DoWhileBodyStart;
+nonterminal IfHeader, ElseHeader, DoWhileBodyEnd;
 nonterminal Addop, Mulop, Relop;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm ;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CondFact ;
-nonterminal java.lang.Integer PcGetter;
+nonterminal java.lang.Integer PcGetter,DoWhileBodyStart;
 
 nonterminal OptionalPrint, RecordBody;
 
@@ -167,7 +167,7 @@ Statement ::= (DesignatorStatementClass) DesignatorStatement SEMI
                                   | (StatementGoto) GOTO Label SEMI
                                   | (StatementIf) IfHeader PcGetter:trueStart Statement
                                 | (StatementIfElse) IfHeader PcGetter:trueStart Statement ElseHeader PcGetter:falseStart Statement
-                                | (StatementDoWhile) DoWhileBodyStart Statement DoWhileBodyEnd LPAREN Condition RPAREN SEMI
+                                | (StatementDoWhile) DoWhileBodyStart:doWhileStart Statement DoWhileBodyEnd LPAREN Condition RPAREN SEMI
                                 |	(StatementBreak) BREAK SEMI
                                 |	(StatementContinue) CONTINUE SEMI
                                 | (StatementReturn) RETURN OptionalExpr SEMI

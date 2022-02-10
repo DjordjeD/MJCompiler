@@ -1,0 +1,45 @@
+// 2020_t2: class fields (v1)
+// just for code-generating (do not execute)
+
+program ABC
+
+record A {
+	int i, j, k;
+	int niz[];
+}
+
+ {
+    int funkcija (int a, int b) int var1, var2;
+    {
+        return var1 + var2 + 4;
+    }
+	void main() 
+	    int a,b;
+	{
+
+
+                do{
+          			b=55;
+          			if(a==305) {
+          			a=310;
+          			continue;
+
+          			}
+          			else {
+          			if(a>500){
+
+          			b=14; break;
+
+          			}
+
+          			b=5005;
+
+          			}
+
+          		}while (a < 3);
+
+            b=14;
+
+	}
+
+}
