@@ -91,9 +91,10 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(DesignatorEquals DesignatorEquals) {
         super.visit(DesignatorEquals);
-        if(DesignatorEquals.getDesignator() instanceof DesignatorSingle
+        if  (DesignatorEquals.getDesignator() instanceof DesignatorSingle
                 && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Int)
-                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Array))
+                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Array)
+                 && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Bool)      )
                 //&& DesignatorEquals.getParent() instanceof DesignatorStatementClass))
              Code.load(DesignatorEquals.getDesignator().obj);
 

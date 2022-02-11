@@ -66,3 +66,321 @@ record A {
 	}
 
 }
+
+codeSize=628
+dataSize=5
+mainPC=54
+0: enter 2 2
+3: load_0
+4: load_1
+5: add
+6: exit
+7: return
+8: exit
+9: return
+10: enter 2 3
+13: load_1
+14: const_1
+15: jne 8 (=23)
+18: const_1
+19: store_2
+20: jmp 10 (=30)
+23: load_1
+24: const_2
+25: jne 5 (=30)
+28: load_0
+29: store_2
+30: load_0
+31: load_2
+32: call -32 (=0)
+35: exit
+36: return
+37: exit
+38: return
+39: enter 0 0
+42: const 118
+47: const_1
+48: bprint
+49: const_0
+50: exit
+51: return
+52: exit
+53: return
+54: enter 0 0
+57: const_1
+58: const_1
+59: jeq 14 (=73)
+62: const 6
+67: neg
+68: const_5
+69: print
+70: jmp 6 (=76)
+73: const_0
+74: const_5
+75: print
+76: const_0
+77: putstatic 1
+80: const_0
+81: putstatic 0
+84: getstatic 0
+87: const_2
+88: jne 7 (=95)
+91: const_1
+92: putstatic 1
+95: getstatic 0
+98: const_1
+99: add
+100: putstatic 0
+103: getstatic 0
+106: const_5
+107: jge 6 (=113)
+110: jmp -26 (=84)
+113: getstatic 1
+116: const_1
+117: jne 20 (=137)
+120: getstatic 0
+123: const_5
+124: jne 9 (=133)
+127: const_1
+128: const_5
+129: print
+130: jmp 7 (=137)
+133: const_1
+134: neg
+135: const_5
+136: print
+137: new 8
+140: dup
+141: const_0
+142: putfield 0
+145: putstatic 3
+148: getstatic 3
+151: const_2
+152: putfield 1
+155: getstatic 3
+158: const_3
+159: newarray 1
+161: putfield 0
+164: getstatic 3
+167: getfield 0
+170: const_0
+171: const_1
+172: getstatic 3
+175: getfield 1
+178: mul
+179: astore
+180: getstatic 3
+183: getfield 0
+186: const_1
+187: const_2
+188: getstatic 3
+191: getfield 1
+194: mul
+195: astore
+196: getstatic 3
+199: getfield 0
+202: const_2
+203: getstatic 3
+206: getfield 0
+209: const_1
+210: aload
+211: getstatic 3
+214: getfield 0
+217: const_0
+218: aload
+219: call -219 (=0)
+222: getstatic 3
+225: getfield 1
+228: mul
+229: const_1
+230: add
+231: astore
+232: call -193 (=39)
+235: const_1
+236: jne 6 (=242)
+239: jmp 15 (=254)
+242: getstatic 3
+245: getfield 0
+248: const_2
+249: aload
+250: const_4
+251: jne 13 (=264)
+254: const 65
+259: const_5
+260: print
+261: jmp 10 (=271)
+264: const 97
+269: const_5
+270: print
+271: const 10
+276: const_1
+277: bprint
+278: const_0
+279: putstatic 0
+282: getstatic 0
+285: const_3
+286: jne 14 (=300)
+289: getstatic 0
+292: const_1
+293: add
+294: putstatic 0
+297: jmp 23 (=320)
+300: getstatic 0
+303: const_4
+304: jne 6 (=310)
+307: jmp 27 (=334)
+310: getstatic 0
+313: const_1
+314: call -304 (=10)
+317: putstatic 0
+320: getstatic 0
+323: const 10
+328: jge 6 (=334)
+331: jmp -49 (=282)
+334: getstatic 0
+337: const_3
+338: jne 17 (=355)
+341: call -302 (=39)
+344: const_1
+345: jne 10 (=355)
+348: const_4
+349: neg
+350: const_5
+351: print
+352: jmp 6 (=358)
+355: const_4
+356: const_5
+357: print
+358: getstatic 3
+361: getfield 0
+364: const_0
+365: read
+366: astore
+367: getstatic 3
+370: getfield 0
+373: const_1
+374: read
+375: astore
+376: getstatic 3
+379: getfield 0
+382: const_2
+383: read
+384: astore
+385: const 10
+390: const_1
+391: bprint
+392: getstatic 3
+395: getfield 0
+398: const_0
+399: aload
+400: getstatic 3
+403: getfield 0
+406: const_1
+407: aload
+408: call -408 (=0)
+411: getstatic 3
+414: getfield 0
+417: const_2
+418: aload
+419: call -419 (=0)
+422: const_5
+423: print
+424: const 10
+429: const_1
+430: bprint
+431: getstatic 3
+434: getfield 0
+437: const_2
+438: aload
+439: const_2
+440: call -430 (=10)
+443: const_5
+444: print
+445: new 8
+448: dup
+449: const_0
+450: putfield 0
+453: putstatic 4
+456: getstatic 4
+459: const_3
+460: putfield 1
+463: getstatic 4
+466: const_3
+467: newarray 1
+469: putfield 0
+472: const_0
+473: putstatic 0
+476: getstatic 4
+479: getfield 0
+482: getstatic 0
+485: getstatic 3
+488: getfield 0
+491: getstatic 0
+494: aload
+495: const_2
+496: mul
+497: getstatic 4
+500: getfield 1
+503: mul
+504: astore
+505: getstatic 0
+508: const_1
+509: add
+510: putstatic 0
+513: getstatic 0
+516: const_3
+517: jge 6 (=523)
+520: jmp -44 (=476)
+523: getstatic 4
+526: getfield 0
+529: const_0
+530: aload
+531: const_5
+532: print
+533: getstatic 4
+536: getfield 0
+539: const_1
+540: aload
+541: const_5
+542: print
+543: getstatic 4
+546: getfield 0
+549: const_2
+550: aload
+551: const_5
+552: print
+553: const 10
+558: const_1
+559: bprint
+560: const_0
+561: putstatic 0
+564: const_0
+565: putstatic 2
+568: getstatic 2
+571: getstatic 3
+574: getfield 0
+577: getstatic 0
+580: aload
+581: getstatic 4
+584: getfield 0
+587: getstatic 0
+590: aload
+591: mul
+592: add
+593: putstatic 2
+596: getstatic 0
+599: const_1
+600: add
+601: putstatic 0
+604: getstatic 0
+607: const_3
+608: jge 6 (=614)
+611: jmp -43 (=568)
+614: getstatic 2
+617: const_5
+618: print
+619: const 10
+624: const_1
+625: bprint
+626: exit
+627: return
