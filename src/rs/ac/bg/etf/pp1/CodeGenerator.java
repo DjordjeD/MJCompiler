@@ -142,7 +142,8 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(DesignatorField DesignatorField) {
         super.visit(DesignatorField);
 
-        Code.load(DesignatorField.getDesignator().obj);
+//        if(!(DesignatorField.getParent() instanceof DesignatorEquals))
+//        Code.load(DesignatorField.getDesignator().obj);
 
 //        if (!(DesignatorField.getParent() instanceof DesignatorPlusPlus
 //                || DesignatorField.getParent() instanceof DesignatorMinusMinus)
@@ -852,6 +853,10 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(FactorNewScalar FactorNewScalar) {
         super.visit(FactorNewScalar);
+        Struct objType = FactorNewScalar.struct;
+        int size = objType.getNumberOfFields() * 4;
+        Code.put(Code.new_);
+        Code.put2(size);
     }
 
     @Override
