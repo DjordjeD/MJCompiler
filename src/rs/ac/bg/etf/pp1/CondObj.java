@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CondObj {
 
-    public int kind;
+
     // 1 - samo relop
     // 2 - x>0 && y<2 samo && (condition single)
     // 3 - x>0 || y<2 samo || (cond mulitple, term single)
@@ -16,7 +16,6 @@ public class CondObj {
     public JmpReplace whileReplace = null;
     public int thenBranch;
     public int afterThenBranch;
-    public int termCnt;
     public int doWhileEnd;
 
 

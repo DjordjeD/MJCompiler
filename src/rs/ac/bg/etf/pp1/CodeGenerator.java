@@ -17,6 +17,7 @@ public class CodeGenerator extends VisitorAdaptor {
     private Stack<CondObj> listCond = new Stack<>();
     private List<Integer> operations = new ArrayList<>();
     private CondObj doWhileCond;
+    private boolean functionInside = false;
     public int getMainPc() {
         return mainPc;
     }
@@ -209,6 +210,7 @@ public class CodeGenerator extends VisitorAdaptor {
         super.visit(FactorDesignatorMultiple);
         Code.put(Code.call);
         Code.put2(FactorDesignatorMultiple.getDesignator().obj.getAdr() - Code.pc + 1);
+      //  functionInside= true;
     }
 
 
@@ -350,30 +352,38 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(CondTermSingle CondTermSingle) {
         super.visit(CondTermSingle);
-        if (CondTermSingle.getParent() instanceof ConditionMultiple) {
-            addReplace(40);
-            Code.putJump(40); // preskaci na then za OP i zameni se sa proslim zapisom,
-        }
-        // osim ako si poslednji
-        //ako si poslednji onda nemoj da prepravljas nego skoci posle then
-        else {
-            addReplace(-20);
-            Code.putJump(-20); // skace iza then za neg(OP) al ne prepravlja prosli zapis
-        }
+
+            if (CondTermSingle.getParent() instanceof ConditionMultiple) {
+                if(!functionInside) {
+                    addReplace(40);
+                    Code.putJump(40);
+                } else // preskaci na then za OP i zameni se sa proslim zapisom,
+                functionInside = false;
+            }
+            // osim ako si poslednji
+            //ako si poslednji onda nemoj da prepravljas nego skoci posle then
+            else {
+                if(!functionInside){
+                addReplace(-20);
+                Code.putJump(-20);
+                } else functionInside = false; // skace iza then za neg(OP) al ne prepravlja prosli zapis
+            }
+
     }
 
 
     @Override
     public void visit(CondTermMultiple CondTermMultiple) {
         super.visit(CondTermMultiple);
-        if (CondTermMultiple.getParent() instanceof ConditionMultiple) {
-            addReplace(-50);
-            Code.putJump(-50);//prepravi -2 zapis na 40  i ti skoci  je netacno neg(OP)
-        } else {
-            addReplace(-30);// && je skroz desno: skace uvek IZA then za neg(OP)
-            Code.putJump(-30);
-        }
-        // if( !poslednji ) prepravi prosli da i on skace iza then za neg(OP)
+
+            if (CondTermMultiple.getParent() instanceof ConditionMultiple) {
+                addReplace(-50);
+                Code.putJump(-50);//prepravi -2 zapis na 40  i ti skoci  je netacno neg(OP)
+            } else {
+                addReplace(-30);// && je skroz desno: skace uvek IZA then za neg(OP)
+                Code.putJump(-30);
+            }
+            // if( !poslednji ) prepravi prosli da i on skace iza then za neg(OP)
 
     }
 
@@ -429,6 +439,7 @@ public class CodeGenerator extends VisitorAdaptor {
         super.visit(DoWhileBodyStart);
         DoWhileBodyStart.integer= Code.pc;
         doWhileCond = new CondObj();
+     //   functionInside = false;
 
     }
 
@@ -437,6 +448,7 @@ public class CodeGenerator extends VisitorAdaptor {
         super.visit(DoWhileBodyEnd);
         doWhileCond.doWhileEnd = Code.pc;
         currentCond.replaceList.clear();
+      //  functionInside = false;
     }
 
     private void replaceJmps(List<JmpReplace> replaceList) {
@@ -520,23 +532,9 @@ public class CodeGenerator extends VisitorAdaptor {
 
 
         replaceJmps(currentCond.replaceList);
-
-    }
-
-    @Override
-    public void visit(IfHeader IfHeader) {
-        super.visit(IfHeader);
-        for (int i = 0; i < operations.size(); i++) {
-            currentCond.replaceList.get(i).op = operations.get(i);
-        }
-        operations.clear();
-        listCond.push(currentCond);
         currentCond = new CondObj();
 
     }
-
-
-
 
     @Override
     public void visit(StatementIfElse StatementIfElse) {
@@ -549,7 +547,23 @@ public class CodeGenerator extends VisitorAdaptor {
 
 
         replaceJmps(currentCond.replaceList);
+        currentCond = new CondObj();
     }
+
+
+    @Override
+    public void visit(IfHeader IfHeader) {
+        super.visit(IfHeader);
+        for (int i = 0; i < operations.size(); i++) {
+            currentCond.replaceList.get(i).op = operations.get(i);
+        }
+        operations.clear();
+        listCond.push(currentCond);
+        currentCond = new CondObj();
+        functionInside = false;
+
+    }
+
 
     @Override
     public void visit(RelopLessEquals RelopLessEquals) {
