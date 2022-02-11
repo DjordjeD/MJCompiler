@@ -74,8 +74,9 @@ public class CodeGenerator extends VisitorAdaptor {
         // ne stavlja objekat na stek jer je i faktor iznad
         // mozda moze neka logika da se smesti
         //   Code.load(DesignatorSingle.obj);
-        if (DesignatorSingle.getParent() instanceof DesignatorMultiple )
+        if (DesignatorSingle.getParent() instanceof DesignatorMultiple ) // stajalo i designator equals
             Code.load(DesignatorSingle.obj);
+
 //        if(DesignatorSingle.getParent() instanceof DesignatorField)
 //            Code.load(DesignatorSingle.obj);
 
@@ -90,6 +91,13 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(DesignatorEquals DesignatorEquals) {
         super.visit(DesignatorEquals);
+        if(DesignatorEquals.getDesignator() instanceof DesignatorSingle
+                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Int)
+                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Array))
+                //&& DesignatorEquals.getParent() instanceof DesignatorStatementClass))
+             Code.load(DesignatorEquals.getDesignator().obj);
+
+
         Code.store(DesignatorEquals.getDesignator().obj);
     }
 
@@ -418,12 +426,15 @@ public class CodeGenerator extends VisitorAdaptor {
         }
         operations.clear();
 
-        currentCond.afterThenBranch = StatementDoWhile.getDoWhileBodyStart().integer;
-        currentCond.thenBranch = Code.pc;
-
-        replaceJmps(currentCond.replaceList);
+        currentCond.thenBranch = StatementDoWhile.getDoWhileBodyStart().integer;
+        currentCond.afterThenBranch = Code.pc;
 
 
+        JmpReplace jmp = currentCond.replaceList.get(0);
+        changeInstruction(jmp.adr, currentCond.thenBranch, jmp.op);
+
+
+        currentCond = new CondObj(); // dodato kad sam popravljao dowhile
         doWhileCond.thenBranch = Code.pc;
         doWhileCond.afterThenBranch = StatementDoWhile.getDoWhileBodyStart().integer;
 
