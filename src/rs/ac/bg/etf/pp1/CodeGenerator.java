@@ -74,7 +74,7 @@ public class CodeGenerator extends VisitorAdaptor {
         // ne stavlja objekat na stek jer je i faktor iznad
         // mozda moze neka logika da se smesti
         //   Code.load(DesignatorSingle.obj);
-        if (DesignatorSingle.getParent() instanceof DesignatorMultiple || DesignatorSingle.getParent() instanceof DesignatorEquals)
+        if (DesignatorSingle.getParent() instanceof DesignatorMultiple )
             Code.load(DesignatorSingle.obj);
 //        if(DesignatorSingle.getParent() instanceof DesignatorField)
 //            Code.load(DesignatorSingle.obj);
@@ -265,6 +265,9 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(StatementRead StatementRead) {
         super.visit(StatementRead);
+        Code.put(Code.read);
+        Code.store(StatementRead.getDesignator().obj);
+
     }
 
     //TERM
