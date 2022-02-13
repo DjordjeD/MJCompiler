@@ -91,12 +91,12 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(DesignatorEquals DesignatorEquals) {
         super.visit(DesignatorEquals);
-        if  (DesignatorEquals.getDesignator() instanceof DesignatorSingle
-                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Int)
-                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Array)
-                 && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Bool)      )
-                //&& DesignatorEquals.getParent() instanceof DesignatorStatementClass))
-             Code.load(DesignatorEquals.getDesignator().obj);
+//        if  (DesignatorEquals.getDesignator() instanceof DesignatorSingle
+//                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Int)
+//                && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Array)
+//                 && !(DesignatorEquals.getExpr().struct.getKind() == Struct.Bool)      )
+//                //&& DesignatorEquals.getParent() instanceof DesignatorStatementClass))
+//         //    Code.load(DesignatorEquals.getDesignator().obj);
 
 
         Code.store(DesignatorEquals.getDesignator().obj);
@@ -142,13 +142,13 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(DesignatorField DesignatorField) {
         super.visit(DesignatorField);
 
-//        if(!(DesignatorField.getParent() instanceof DesignatorEquals))
-//        Code.load(DesignatorField.getDesignator().obj);
+         Code.load(DesignatorField.getDesignator().obj);
 
 //        if (!(DesignatorField.getParent() instanceof DesignatorPlusPlus
 //                || DesignatorField.getParent() instanceof DesignatorMinusMinus)
 //        )
-        Code.load(DesignatorField.getDesignatorRecordField().obj);
+        if(!(DesignatorField.getParent() instanceof DesignatorEquals))
+            Code.load(DesignatorField.getDesignatorRecordField().obj);
 //        if(DesignatorField.getParent() instanceof DesignatorPlusPlus
 //        || DesignatorField.getParent() instanceof DesignatorMinusMinus)
 //            Code.load(DesignatorField.getDesignator().obj);
