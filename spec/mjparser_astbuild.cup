@@ -185,7 +185,7 @@ Statement ::= (DesignatorStatementClass) DesignatorStatement:D1 SEMI {: RESULT=n
                                   | (StatementPrint) PRINT LPAREN Expr:E1 OptionalPrint:O2 RPAREN SEMI {: RESULT=new StatementPrint(E1, O2); RESULT.setLine(E1left); :}
                                   | (StatementGoto) GOTO Label:L1 SEMI {: RESULT=new StatementGoto(L1); RESULT.setLine(L1left); :}
                                   | (StatementIf) IfHeader:I1 PcGetter:trueStart Statement:S2 {: RESULT=new StatementIf(I1, trueStart, S2); RESULT.setLine(I1left); :}
-                                | (StatementIfElse) IfHeader:I1 PcGetter:trueStart Statement:S2 ElseHeader:E3 PcGetter:falseStart Statement:S4 {: RESULT=new StatementIfElse(I1, trueStart, S2, E3, falseStart, S4); RESULT.setLine(I1left); :}
+                                | (StatementIfElse) IfHeader:I1 PcGetter:trueStart Statement:S2 ElseHeader:E3 PcGetter:falseStart Statement:S4 PcGetter:endStatement {: RESULT=new StatementIfElse(I1, trueStart, S2, E3, falseStart, S4, endStatement); RESULT.setLine(I1left); :}
                                 | (StatementDoWhile) DoWhileBodyStart:doWhileStart Statement:S1 DoWhileBodyEnd:D2 LPAREN Condition:C3 RPAREN SEMI {: RESULT=new StatementDoWhile(doWhileStart, S1, D2, C3); RESULT.setLine(doWhileStartleft); :}
                                 |	(StatementBreak) BREAK SEMI {: RESULT=new StatementBreak(); :}
                                 |	(StatementContinue) CONTINUE SEMI {: RESULT=new StatementContinue(); :}

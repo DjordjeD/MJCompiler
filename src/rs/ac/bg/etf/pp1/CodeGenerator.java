@@ -182,16 +182,24 @@ public class CodeGenerator extends VisitorAdaptor {
         // if(!(FactorDesignator.getDesignator() instanceof DesignatorSingle))
         //samo faktor uzima da stavlja objekat na stek
         // if(factor)
-        if (!(FactorDesignator.getDesignator() instanceof DesignatorField))
+        if (!(FactorDesignator.getDesignator() instanceof DesignatorField)) {
             Code.load(FactorDesignator.getDesignator().obj);
+            if(FactorDesignator.getDesignator().obj.getType().equals(SymbolTable.boolType))
+            {
+                Code.loadConst(1);
+            }
+
+        }
+
 
     }
 
     @Override
     public void visit(FactorBoolean FactorBoolean) {
         super.visit(FactorBoolean);
-        //  if(factor)
-        Code.loadConst(FactorBoolean.getValue() ? 1 : 0);
+         if(FactorBoolean.getValue())
+             Code.loadConst(1);
+         else Code.loadConst(0);
     }
 
     @Override
@@ -220,6 +228,8 @@ public class CodeGenerator extends VisitorAdaptor {
         super.visit(FactorDesignatorMultiple);
         Code.put(Code.call);
         Code.put2(FactorDesignatorMultiple.getDesignator().obj.getAdr() - Code.pc + 1);
+        if(FactorDesignatorMultiple.getDesignator().obj.getName().equals("verify"))
+            Code.loadConst(1);
       //  functionInside= true;
     }
 
@@ -560,7 +570,8 @@ public class CodeGenerator extends VisitorAdaptor {
         }
         currentCond.thenBranch = StatementIfElse.getPcGetter().integer;
         currentCond.afterThenBranch = StatementIfElse.getPcGetter1().integer;
-
+        int elseEnd = StatementIfElse.getPcGetter3().integer;
+       addContinue(currentCond.afterThenBranch -3,elseEnd);
 
         replaceJmps(currentCond.replaceList);
         currentCond = new CondObj();
@@ -907,6 +918,7 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(ElseHeader ElseHeader) {
         super.visit(ElseHeader);
+        Code.putJump(169);
     }
 
     @Override

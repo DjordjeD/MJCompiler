@@ -166,7 +166,7 @@ Statement ::= (DesignatorStatementClass) DesignatorStatement SEMI
                                   | (StatementPrint) PRINT LPAREN Expr OptionalPrint RPAREN SEMI
                                   | (StatementGoto) GOTO Label SEMI
                                   | (StatementIf) IfHeader PcGetter:trueStart Statement
-                                | (StatementIfElse) IfHeader PcGetter:trueStart Statement ElseHeader PcGetter:falseStart Statement
+                                | (StatementIfElse) IfHeader PcGetter:trueStart Statement ElseHeader PcGetter:falseStart Statement PcGetter:endStatement
                                 | (StatementDoWhile) DoWhileBodyStart:doWhileStart Statement DoWhileBodyEnd LPAREN Condition RPAREN SEMI
                                 |	(StatementBreak) BREAK SEMI
                                 |	(StatementContinue) CONTINUE SEMI
